@@ -1,0 +1,31 @@
+<?php
+class controllerHelper{
+    public function __construct()
+    {
+        global $baseUrl;
+        $baseUrl = $_ENV['BASE_URL'];
+    }
+
+    public function loadView($viewName, $viewData = array(), $show_header = true){
+        extract($viewData);
+
+        require 'app/views/'.$viewName.'.php';
+    }
+
+    public function loadTemplate($viewData = array()){
+        extract ($viewData);
+
+        require 'app/views/template.php';
+    }
+
+    public function loadViewInTemplate($viewName, $viewData = array()){
+        extract($viewData);
+        require 'app/views/'.$viewName.'.php';
+    }
+
+    public function baseUrl(){
+        return $_ENV['BASE_URL'];
+    }
+}
+
+?>
