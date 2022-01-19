@@ -8,7 +8,14 @@ class cadastroController extends controllerHelper{
     }
 
     public function cadastrar(){
-        
+        $this->loadValidator('Admin');
+        $adminValidator = new Admin();
+        $adminValidator->validate($_POST);
+
+        echo "<pre>";
+        print_r($adminValidator->getMessages());
+        echo "</pre>";
+        exit;
     }
 }
 

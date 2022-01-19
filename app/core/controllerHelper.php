@@ -23,6 +23,10 @@ class controllerHelper{
         require 'app/views/'.$viewName.'.php';
     }
 
+    public function loadValidator($validatorName){
+        require 'app/models/validators/'.$validatorName.'.php';
+    }
+
     public function baseUrl(){
         return $_ENV['BASE_URL'];
     }

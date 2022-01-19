@@ -28,7 +28,7 @@
     <div class="card-body">
       <p class="login-box-msg">Registre um novo membro</p>
 
-      <form action="<?=$baseUrl?>app/index.html" method="post">
+      <form method="post" id="regForm">
         <div class="input-group mb-3">
           <input type="text" class="form-control" placeholder="Código do Admin">
           <div class="input-group-append">
@@ -38,8 +38,8 @@
           </div>
         </div>
         <div class="input-group mb-3">
-            <input type="text" aria-label="Nome" placeholder="Nome" class="form-control">
-            <input type="text" aria-label="Sobrenome" placeholder="Sobrenome" class="form-control">
+            <input type="text" name="name" aria-label="Nome" placeholder="Nome" class="form-control">
+            <input type="text" name="lastName" aria-label="Sobrenome" placeholder="Sobrenome" class="form-control">
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-user"></span>
@@ -47,7 +47,7 @@
             </div>
         </div>
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Email">
+          <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -55,7 +55,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Password">
+          <input type="password" name="password" class="form-control" placeholder="Password">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -63,7 +63,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Retype password">
+          <input type="password" name="retypePassword" class="form-control" placeholder="Retype password">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -84,11 +84,14 @@
 </div>
 <!-- /.register-box -->
 
+<input type="hidden" value="<?=$baseUrl?>" id="burl">
+
 <!-- jQuery -->
 <script src="<?=$baseUrl?>app/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="<?=$baseUrl?>app/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="<?=$baseUrl?>app/dist/js/adminlte.min.js"></script>
+<script src="<?=$baseUrl?>app/assets/js/cadastro.js"></script>
 </body>
 </html>
