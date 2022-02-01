@@ -1,4 +1,6 @@
 <?php
+use models\validators\Admin as AdminValidator;
+use models\Admin;
 class cadastroController extends controllerHelper{
     public function index(){
         $data = array();
@@ -9,13 +11,18 @@ class cadastroController extends controllerHelper{
 
     public function cadastrar(){
         $this->loadValidator('Admin');
-        $adminValidator = new Admin();
+        $adminValidator = new AdminValidator('create');
         $adminValidator->validate($_POST);
 
-        echo "<pre>";
-        print_r($adminValidator->getMessages());
-        echo "</pre>";
-        exit;
+        $adminModel = new Admin();
+
+        if(!empty($adminValidator->getMessages())){
+            $this->response(['error' => $adminValidator->getMessages()]);
+        }else{
+            if($adminModel->cadastrar($_POST)){
+                $this->response(['response' => 'done']);
+            }
+        }
     }
 }
 

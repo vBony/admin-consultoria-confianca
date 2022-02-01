@@ -1,11 +1,5 @@
 <?php
 class controllerHelper{
-    public function __construct()
-    {
-        global $baseUrl;
-        $baseUrl = $_ENV['BASE_URL'];
-    }
-
     public function loadView($viewName, $viewData = array(), $show_header = true){
         extract($viewData);
 
@@ -29,6 +23,10 @@ class controllerHelper{
 
     public function baseUrl(){
         return $_ENV['BASE_URL'];
+    }
+
+    public function response($data){
+        echo json_encode($data);
     }
 }
 
