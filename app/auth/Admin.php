@@ -3,15 +3,54 @@ namespace auth;
 
 use models\Admin as ModelAdmin;
 use models\AccessToken;
-use core\controllerHelper;
-use core\modelHelper;
+use models\validators\Admin as AdminValidator;
 
 class Admin{
+    private $Admin;
+
+    public function __construct(){
+        $this->Admin = new ModelAdmin();
+    }
+
     public function loginAfterRegister($id){
         $ModelAdmin = new ModelAdmin();
 
         $userData = $ModelAdmin->buscarPorId($id);
         $this->setSession($userData);
+    }
+
+    public function login($data){
+        $messages = array();
+        $userFind = array();
+
+        $AdminValidator = new AdminValidator();
+        $AdminValidator->email($data);
+        $AdminValidator->password($data);
+
+        if(empty($AdminValidator->getMessages())){
+            $userFind = $this->Admin->buscarPorEmail($data['email']);
+
+            if(!empty($userFind)){
+                if($this->validatePassword($data['password'], $userFind['password'])){
+                    $this->setSession($userFind);
+
+                    return true;
+                }else{
+                    $messages['password'] = 'Senha inválida';
+                }
+            }else{
+                $messages['email'] = 'Usuário não encontrado';
+            }
+        }else{
+            $messages = $AdminValidator->getMessages();
+        }
+
+        return $messages;
+        
+    }
+
+    public function validatePassword($password, $hash){
+        return password_verify($password, $hash);
     }
 
     public function setSession($userData){

@@ -8,7 +8,7 @@ class Admin  {
     private $emptyMessage = 'Campo obrigatório';
     private $type = '';
 
-    public function __construct($type)
+    public function __construct($type = null)
     {
         $this->type = $type;
     }
@@ -28,6 +28,12 @@ class Admin  {
 
     public function getMessages(){
         return $this->messages;
+    }
+
+    public function getMessage($attr){
+        if(isset($this->messages[$attr])){
+            return $this->messages[$attr];
+        }
     }
 
     // name	lastName	email	urlAvatar	password	
@@ -75,7 +81,7 @@ class Admin  {
         $pass = $data['password'];
 
         if(!empty($pass)){
-            if(strlen($pass) < 3){
+            if(strlen($pass) < 3 && $this->type == 'create'){
                 $this->messages['password'] = 'A senha deve conter no mínimo 3 caracteres';
             }
         }else{
