@@ -1,6 +1,8 @@
 <?php
 use models\validators\Admin as AdminValidator;
 use models\Admin;
+use auth\Admin as AdminAuth;
+use core\controllerHelper;
 class cadastroController extends controllerHelper{
     public function index(){
         $data = array();
@@ -13,14 +15,19 @@ class cadastroController extends controllerHelper{
         $this->loadValidator('Admin');
         $adminValidator = new AdminValidator('create');
         $adminValidator->validate($_POST);
+        $adminAuth = new AdminAuth();
 
         $adminModel = new Admin();
 
         if(!empty($adminValidator->getMessages())){
             $this->response(['error' => $adminValidator->getMessages()]);
         }else{
-            if($adminModel->cadastrar($_POST)){
-                $this->response(['response' => 'done']);
+            $id = $adminModel->cadastrar($_POST);
+            if(!is_bool($id)){
+                $adminAuth->loginAfterRegister($id);
+                $this->response(['success' => 1]);
+            }else{
+                $this->response(['success' => 0]);
             }
         }
     }

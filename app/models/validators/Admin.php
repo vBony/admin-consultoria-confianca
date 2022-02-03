@@ -54,12 +54,19 @@ class Admin  {
 
     public function email($data){
         $email = $data['email'];
+        $Admin = new modelAdmin();
 
         if(empty($email)){
             $this->messages['email'] = $this->emptyMessage;
         }else{
             if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->messages['email'] = "Email inválido"; 
+            }elseif($this->type == 'create'){
+                $userFind = $Admin->buscarPorEmail($data['email']);
+
+                if(!empty($userFind)){
+                    $this->messages['email'] = "E-mail já está em uso";
+                }
             }
         }
     }

@@ -99,7 +99,12 @@
 
         <div class="row">
             <div class="col-4">
-                <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+                <button type="submit" class="btn btn-primary btn-block" id="btn-register">Registrar</button>
+				<button class="btn btn-primary btn-block" disabled id="btn-loading">
+					<div class="spinner-border spinner-border-sm text-light" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+				</button>
             </div>
         </div>
       </form>
