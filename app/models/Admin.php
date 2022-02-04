@@ -3,6 +3,7 @@ namespace models;
 use core\modelHelper;
 use \PDO;
 use \PDOException;
+use core\controllerHelper;
 
 class Admin extends modelHelper{
     private $table = 'admin';
@@ -58,9 +59,9 @@ class Admin extends modelHelper{
 
         if($sql->rowCount() > 0){
             if($safe){
-                $data = $this->getSafeData($sql->fetch(PDO::FETCH_ASSOC));
+                $data = $this->mountData( $this->getSafeData( $sql->fetch(PDO::FETCH_ASSOC) ) );
             }else{
-                return $sql->fetch(PDO::FETCH_ASSOC);
+                return $this->mountData( $sql->fetch(PDO::FETCH_ASSOC) );
             }
         }
 
@@ -69,6 +70,21 @@ class Admin extends modelHelper{
 
     public function getSafeData($data){
         unset($data['password']);
+        return $data;
+    }
+
+
+    /**
+     * Ajusta dados necessários para mostrar na tela
+     */
+    public function mountData($data){
+        if($data['urlAvatar'] == 'none'){
+            $data['urlAvatar'] = \core\controllerHelper::getBaseUrl() . 'app/assets/imgs/avatar/default.png';
+        }else{
+            $fileName =  $data['urlAvatar'];
+            $data['urlAvatar'] = \core\controllerHelper::getBaseUrl() . 'app/assets/imgs/avatar/' . $fileName;
+        }
+
         return $data;
     }
 }

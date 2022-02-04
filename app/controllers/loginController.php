@@ -27,5 +27,10 @@ class loginController extends controllerHelper{
             $this->response(['error' => $loginResponse]);
         }
     }
+
+    public function logout(){
+        $this->Auth->logout();
+        $this->response(['success' => 1]);
+    }
 }
 ?>

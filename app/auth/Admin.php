@@ -49,6 +49,10 @@ class Admin{
         
     }
 
+    public function logout(){
+        $this->killSession();
+    }
+
     public function validatePassword($password, $hash){
         return password_verify($password, $hash);
     }
@@ -61,6 +65,10 @@ class Admin{
         $data['accessToken'] = $this->setAccessToken($userData);
 
         $_SESSION['userSession'] = $data;
+    }
+
+    public function getIdUserLogged(){
+        return $_SESSION['userSession']['accessToken']['idAdmin'];
     }
 
     public function setAccessToken($userData){

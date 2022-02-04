@@ -1,62 +1,33 @@
-$(document).ready(() => {
-    var glide = new Glide('.glide', {
-        type: 'carousel',
-        focusAt: 'center',
-        autoplay: 2000,
-        hoverpause: false,
-        perView: 3,
-        breakpoints: {
-            576: {
-              perView: 1
+$(document).ready(function(){
+    const baseUrl = $('#burl').val()
+    $('.loading').fadeOut('fast')
+
+    $('#logout-btn').on('click', function(){
+        loading()
+        $.ajax({
+            url: baseUrl+'login/logout',
+            type: "POST",
+            dataType: 'json',                
+            success: function(data){
+                if(data.success){
+                    if(data.success == 1){
+                        window.location.href = baseUrl 
+                    }else{
+                        alert('Houve um problema na requisição, tente novamente mais tarde ou entre em contato com o desenvolvedor.')
+                    }
+                }
             },
-
-            768: {
-              perView: 2
+            complete: function(){
+                loadingComplete()
             }
-
-
-        }
+        });
     })
-    
-    glide.mount()
-    
-    $(document).on('scroll', () => {
-        let selectHeader = $('#header')
-        if(selectHeader){
-            if (window.scrollY > 100) {
-                selectHeader.addClass('header-scrolled')
-            } else {
-                selectHeader.removeClass('header-scrolled')
-            }
-        }
-    })
-
-    $('#btn-mobile-menu').on('click', () => {
-        let menuBtn = $('.menu-btn')
-
-        if(menuBtn.hasClass('open')){
-            menuBtn.removeClass('open')
-        }else{
-            menuBtn.addClass('open')
-        }
-    })
-
-    $(".icon-box").hover(function () {
-        let cor = $(this).data('cor')
-        $(this).children('.icon').css('background-color', cor)
-        $(this).children('.icon').children('i').css('color', 'white')
-    }, 
-    function () {
-        let cor = $(this).data('cor')
-        $(this).children('.icon').css('background-color', '#f5f5f5')
-        $(this).children('.icon').children('i').css('color', cor)
-    });
-
-    $(".member").hover(function () {
-        $(this).children('.member-img').children('.social').css('opacity', 1)
-    }, 
-    function () {
-        $(this).children('.member-img').children('.social').css('opacity', 0)
-    });
-        
 })
+
+function loading(){
+    $('.loading').fadeIn('fast')
+}
+
+function loadingComplete(){
+    $('.loading').fadeOut('fast')
+}

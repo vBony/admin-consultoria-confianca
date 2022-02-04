@@ -34312,6 +34312,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin:0px
 }
 
 .product-list-in-card > .item {
