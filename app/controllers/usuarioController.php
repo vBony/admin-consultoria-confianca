@@ -1,10 +1,11 @@
 <?php
+
+use core\controllerHelper;
 use auth\Admin as AuthAdmin;
 use models\Admin;
-use core\controllerHelper;
-class homeController extends controllerHelper{
-    private $Admin;
+use models\Hierarchy;
 
+class usuarioController extends controllerHelper{
     public function __construct(){
         $this->Admin = new Admin();
     }
@@ -20,19 +21,12 @@ class homeController extends controllerHelper{
         $data = array();
         $data['baseUrl'] = $baseUrl;
         $data['user'] = $user;
+        $data['listas']['cargos'] = Hierarchy::buscar();
 
         $data['templateData']['user'] = $user;
         $data['templateData']['baseUrl'] = $baseUrl;
-        $data['templateData']['path'] = 'dashboard';
+        $data['templateData']['path'] = 'usuarios';
 
-        $this->loadView('home', $data);
+        $this->loadView('usuario', $data);
     }
-
-    // public function home(){
-    //     $data = array();
-
-    //     $this->loadView('home', $data);
-    // }
 }
-
-?>
