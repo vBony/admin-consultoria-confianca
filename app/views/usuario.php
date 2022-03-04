@@ -18,7 +18,6 @@
     <script src="<?=$baseUrl?>app/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script src="<?=$baseUrl?>app/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="<?=$baseUrl?>app/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-    <script src="<?=$baseUrl?>app/assets/js/usuario.js"></script>
     <script src="https://unpkg.com/vue@3"></script>
     <script src="<?=$baseUrl?>app/dist/js/adminlte.js"></script>
     <script src="<?=$baseUrl?>app/assets/js/template.js"></script>
@@ -28,6 +27,14 @@
     <header id="header" class="header-transparent">
         <?php $this->loadTemplate($templateData); ?>
     </header>
+
+    <div class="loading w-100 h-100" v-show="loading == 1">
+        <div class="spinner-border text-white" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+
+        <div class="text-white fs-4">Carregando...</div>
+    </div>
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -55,32 +62,87 @@
                             </div>
         
                             <form>
-                                <div class="card-body">
-                                    <div class="col-12 p-4 border mb-3">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col-8">
-                                                <div class="form-group">
-                                                    <label>Cargo</label>
-                                                    <select class="form-control">
-                                                        <option value="">Selecione</option>
-                                                        <?php foreach($listas['cargos'] as $cargos): ?>
-                                                            <option value="<?=$cargos['id']?>"><?=$cargos['name']?></option>
-                                                        <?php endforeach; ?>
-                                                    </select>
+                                <div class="card-body row">
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="col-12 p-4 border mb-4">
+                                            <div class="row">
+                                                <div class="col-9">
+                                                    <div class="form-group">
+                                                        <label>Cargo</label>
+                                                        <select class="form-control" v-model="idCargo">
+                                                            <option value="0">Selecione</option>
+                                                            <?php foreach($listas['cargos'] as $cargos): ?>
+                                                                <option value="<?=$cargos['id']?>"><?=$cargos['name']?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="form-group">
-                                                    <label>&nbsp;</label>
-                                                    <button class="form-control btn btn-success"> Gerar </button>
+                                                <div class="col-3">
+                                                    <div class="form-group">
+                                                        <label>&nbsp;</label>
+                                                        <button class="form-control btn btn-success" @click="gerarCodigo()"> Gerar </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+    
+                                        <div class="col-12" v-show="idCargo != 0">
+                                            <div class="info-box bg-info bg-light">
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"> <b> Permissões </b></span>
+                                                    <ul class="text-muted" v-if="idCargo == 1">
+                                                        <li>Acesso a todas as estatísticas</li>
+                                                        <li>Responder contatos</li>
+                                                        <li>Avaliar simulações</li>
+                                                        <li>Responder simulações</li>
+                                                    </ul>
+                                                    <ul class="text-muted" v-if="idCargo == 2">
+                                                        <li>Responder contatos</li>
+                                                        <li>Avaliar simulações</li>
+                                                        <li>Responder simulações</li>
+                                                    </ul>
+                                                    <ul class="text-muted" v-if="idCargo == 3">
+                                                        <li>Responder contatos</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+    
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Código</label>
+                                            <input type="text" class="form-control" disabled>
+                                        </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Código</label>
-                                        <input type="text" class="form-control" v-model="message" disabled>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3 class="card-title">Códigos disponíveis</h3>
+                                            </div>
+                                            <!-- /.card-header -->
+                                            <div class="card-body p-0 table-responsive">
+                                                <table class="table table-striped" v-if="codigos.length > 0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Código</th>
+                                                            <th>Cargo</th>
+                                                            <th>Vence em</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="codigo in codigos" :key="codigo.id">
+                                                            <td><span class="badge bg-info">{{codigo.token}}</span></td>
+                                                            <td>
+                                                                {{codigo.nomeHierarchy}}
+                                                            </td>
+                                                            <td>{{codigo.restanteVencimento}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <div class="text-center py-3" v-if="codigos.length == 0">
+                                                    <p class="text-muted"> Nenhum código disponível </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -91,5 +153,7 @@
         </section>
     </div>
 </div>
+<input type="hidden" id="baseUrl" value="<?=$baseUrl?>">
+<script src="<?=$baseUrl?>app/assets/js/usuario.js"></script>
 </body>
 </html>
