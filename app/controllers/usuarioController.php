@@ -35,20 +35,31 @@ class usuarioController extends controllerHelper{
     public function criarCodigo(){
         $auth = new AuthAdmin();
         $auth->isLogged();
+        $erros = array();
 
         $adminId = $auth->getIdUserLogged();
-        $user = $this->Admin->buscarPorId($adminId);
+        $idCargo = !empty($_POST['idCargo']) ? $_POST['idCargo'] : null;
+
+        if(empty($idCargo)){
+            $erros['cargo'] = 'Selecione um cargo';
+        }
+
         $token = new AdminCreateToken();
 
-        if($token->podeGerar()){
-            $lista = $token->salvar(1);
+        if($token->podeGerar() && empty($erros)){
+            $lista = $token->salvar($idCargo);
             if(is_bool($lista)){
                 $this->response(['error' => 400]);
             }else{
-                $this->response(['codigos' => $lista]);
+                $lista['success'] = 1;
+                $this->response($lista);
             }
         }else{
-            $this->response(['cargo' => 'Limite máximo de códigos atingido']);
+            $erros['cargo'] = 'Limite máximo de códigos atingido';
+        }
+
+        if(!empty($erros)){
+            $this->response(['erros' => $erros]);
         }
     }
 
