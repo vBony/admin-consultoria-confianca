@@ -29,6 +29,7 @@ Vue.createApp({
                     this.codigos = response.data.codigos
                     this.codigo = response.data.codigo
                     toastr.success('Código criado com sucesso')
+                    this.idCargo = 0
                 }
             })
             .catch((error) => {
@@ -36,37 +37,57 @@ Vue.createApp({
             }).finally(() => {
                 this.loading =  false
             });
+        },
+
+        buscarCodigos(){
+            let baseUrl = $('#baseUrl').val()
+
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            };
+
+            this.loading = true
+            fetch(baseUrl+'usuario/codigos-disponiveis', requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                
+                // check for error response
+                if (!response.ok || data.error) {
+                    alert('Houve um problema na requisição, tente novamente mais tarde!')
+                    
+                    // get error message from body or default to response status
+                    // const error = (data && data.message) || response.status;
+                    // return Promise.reject(error);
+                }
+        
+                this.codigos = data.codigos
+                this.loading = false
+            })
+            .catch(error => {
+                this.errorMessage = error;
+                console.error('There was an error!', error);
+            });
+        },
+
+        copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text);
+
+            let button = $(element)
+            if(button.length){
+                let originalText = $(element).text()
+                
+                button.text('copiado!')
+                setTimeout(() => {
+                    button.text(originalText)
+                }, 2000);
+            }else{
+                console.log('element not found');
+            }
         }
     },
 
     mounted(){
-        let baseUrl = $('#baseUrl').val()
-
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-        };
-
-        this.loading = true
-        fetch(baseUrl+'usuario/codigos-disponiveis', requestOptions)
-        .then(async response => {
-            const data = await response.json();
-            
-            // check for error response
-            if (!response.ok || data.error) {
-                alert('Houve um problema na requisição, tente novamente mais tarde!')
-                
-                // get error message from body or default to response status
-                // const error = (data && data.message) || response.status;
-                // return Promise.reject(error);
-            }
-    
-            this.codigos = data.codigos
-            this.loading = false
-        })
-        .catch(error => {
-            this.errorMessage = error;
-            console.error('There was an error!', error);
-        });
+        this.buscarCodigos()
     }
 }).mount('#app')

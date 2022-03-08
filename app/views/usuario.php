@@ -117,7 +117,7 @@
                                             <div class="input-group mb-3">
                                                 <input type="text" class="form-control" disabled v-model="codigo" aria-label="Código de cadastro" aria-describedby="basic-addon2">
                                                 <div class="input-group-append" >
-                                                    <div class="input-group-text" id="basic-addon2"><span class="btn btn-success badge">copiar</span></div>
+                                                    <div class="input-group-text" id="basic-addon2"><span id="copiarCodigoBtn" class="btn btn-success badge" @click="copyToClipboard(codigo, '#copiarCodigoBtn')">copiar</span></div>
                                                 </div>
                                             </div>
                                         </div>
