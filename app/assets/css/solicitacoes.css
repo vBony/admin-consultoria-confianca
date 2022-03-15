@@ -1,0 +1,4 @@
+.avatar-responsavel img{
+    height: 35px !important;
+    object-fit: cover;
+}

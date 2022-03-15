@@ -101,6 +101,13 @@
 						</a>
 					</li>
 
+                    <li class="nav-item">
+						<a href="<?=$baseUrl?>solicitacoes" class="nav-link" data-id="solicitacoes">
+                            <i class="fas fa-clipboard-list  nav-icon"></i>
+							<p>Solicitações</p>
+						</a>
+					</li>
+
 					<a href="#" id="logout-btn" class="nav-link align-self-baseline">
 						<i class="nav-icon fas fa-sign-out-alt"></i>
 						<p>
