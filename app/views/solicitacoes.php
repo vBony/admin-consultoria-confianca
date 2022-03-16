@@ -70,36 +70,39 @@
                                 </div>
                             </div>
                             <div class="card-body p-0">
-                                <ul class="nav nav-pills flex-column">
-                                    <li class="nav-item active">
-                                        <a href="#" class="nav-link">
-                                            <i class="fas fa-user"></i> Minhas análises
-                                            <span class="badge bg-primary float-right">12</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item active">
-                                        <a href="#" class="nav-link d-flex">
-                                            <i class="fas fa-user"></i> Tipo de solicitação
-                                            <i class="right fas fa-angle-left float-right"></i>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="far fa-file-alt"></i> Drafts
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="fas fa-filter"></i> Junk
-                                            <span class="badge bg-warning float-right">65</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="far fa-trash-alt"></i> Trash
-                                        </a>
-                                    </li>
-                                </ul>
+                                <div id="accordion">
+                                    <ul class="nav nav-pills flex-column">
+                                        <li class="nav-item active">
+                                            <a href="#" class="nav-link main-nav-item d-flex align-items-center">
+                                                <i class="fas fa-user mr-2"></i> 
+                                                Minhas avaliações
+                                                <span class="badge badge-info ml-auto">6</span>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item active" id="headTipoSolicitacao">
+                                            <a href="#" class="nav-link main-nav-item d-flex align-items-center" data-toggle="collapse" data-target="#collapseTipoSolicitacao" aria-expanded="true" aria-controls="collapseTipoSolicitacao">
+                                                <i class="fas fa-clipboard-list mr-2"></i> 
+                                                Tipo de solicitação
+                                                <i class="fas fa-angle-down ml-auto"></i>
+                                            </a>
+
+                                            <ul class="collapse-filtro collapse" id="collapseTipoSolicitacao" aria-labelledby="headTipoSolicitacao" data-parent="#accordion">
+                                                <li class="nav-item active">
+                                                    <a href="#" class="nav-link">
+                                                        Financiamento
+                                                    </a>
+                                                </li>
+    
+                                                <li class="nav-item active">
+                                                    <a href="#" class="nav-link">
+                                                        Contato
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>

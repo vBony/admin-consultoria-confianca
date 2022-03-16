@@ -2,3 +2,25 @@
     height: 35px !important;
     object-fit: cover;
 }
+
+.loading{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed !important;
+    flex-direction: column;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.603);
+    transition: 0.2s;
+}
+
+.collapse-filtro{
+    padding: 0px 0px 0px 20px !important;
+    list-style-type: none !important;
+}
+
+.main-nav-item{
+    font-weight: bold;
+}
