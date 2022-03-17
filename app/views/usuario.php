@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
     <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="<?=$baseUrl?>app/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
     <link rel="stylesheet" href="<?=$baseUrl?>app/assets/css/usuario.css">
@@ -18,6 +19,8 @@
     <script src="<?=$baseUrl?>app/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script src="<?=$baseUrl?>app/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="<?=$baseUrl?>app/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://unpkg.com/vue@3"></script>
     <script src="<?=$baseUrl?>app/dist/js/adminlte.js"></script>
     <script src="<?=$baseUrl?>app/assets/js/template.js"></script>
@@ -69,18 +72,19 @@
                                                 <div class="col-9">
                                                     <div class="form-group">
                                                         <label>Cargo</label>
-                                                        <select class="form-control" v-model="idCargo">
+                                                        <select class="form-control" v-model="idCargo" v-bind:class="{ 'is-invalid': messages.cargo }" @change="messages.cargo = ''">
                                                             <option value="0">Selecione</option>
                                                             <?php foreach($listas['cargos'] as $cargos): ?>
                                                                 <option value="<?=$cargos['id']?>"><?=$cargos['name']?></option>
                                                             <?php endforeach; ?>
                                                         </select>
+                                                        <div class="invalid-feedback">{{messages.cargo}}</div>
                                                     </div>
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="form-group">
                                                         <label>&nbsp;</label>
-                                                        <button class="form-control btn btn-success" @click="gerarCodigo()"> Gerar </button>
+                                                        <button class="form-control btn btn-success" @click.stop.prevent="gerarCodigo"> Gerar </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -110,7 +114,12 @@
     
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Código</label>
-                                            <input type="text" class="form-control" disabled>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" disabled v-model="codigo" aria-label="Código de cadastro" aria-describedby="basic-addon2">
+                                                <div class="input-group-append" >
+                                                    <div class="input-group-text" id="basic-addon2"><span id="copiarCodigoBtn" class="btn btn-success badge" @click="copyToClipboard(codigo, '#copiarCodigoBtn')">copiar</span></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -120,7 +129,7 @@
                                             </div>
                                             <!-- /.card-header -->
                                             <div class="card-body p-0 table-responsive">
-                                                <table class="table table-striped" v-if="codigos.length > 0">
+                                                <table class="table table-striped" v-if="codigos">
                                                     <thead>
                                                         <tr>
                                                             <th>Código</th>
@@ -138,7 +147,7 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                <div class="text-center py-3" v-if="codigos.length == 0">
+                                                <div class="text-center py-3" v-if="!codigos">
                                                     <p class="text-muted"> Nenhum código disponível </p>
                                                 </div>
                                             </div>

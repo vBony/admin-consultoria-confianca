@@ -21,6 +21,18 @@ class AdminCreateToken extends modelHelper{
         $this->sanitazer = new sanitazer();
     }
 
+    public function buscarPorId($id){
+        $sql = "SELECT * FROM {$this->table} WHERE id = :id";
+
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":id", $id);
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            return $sql->fetch(PDO::FETCH_ASSOC);
+        }
+    }
+
     public function validate($token){
         $sql = "SELECT * FROM {$this->table} WHERE token = :token";
         $sql = $this->db->prepare($sql);
@@ -49,13 +61,19 @@ class AdminCreateToken extends modelHelper{
             $this->db->beginTransaction();
 
             $sql->execute();
+            $id = $this->db->lastInsertId(PDO::FETCH_ASSOC);
             $this->db->commit();
 
-            return $this->getDisponiveis();
+            $token = $this->buscarPorId($id);
+
+            return [
+                'codigos' => $this->getDisponiveis(),
+                'codigo' => $token['token']
+            ];
         } catch(PDOException $e) {
             $this->db->rollback();
 
-            // exit($e->getMessage());
+            exit($e->getMessage());
             // TODO: SALVAR ERRO NUMA TABELA DE LOG
 
             return false;
