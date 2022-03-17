@@ -2,11 +2,14 @@
 use auth\Admin as AuthAdmin;
 use models\Admin;
 use core\controllerHelper;
+use models\Solicitacoes;
 class solicitacoesController extends controllerHelper{
     private $Admin;
+    private $Solicitacoes;
 
     public function __construct(){
         $this->Admin = new Admin();
+        $this->Solicitacoes = new Solicitacoes();
     }
 
     public function index(){
@@ -28,11 +31,13 @@ class solicitacoesController extends controllerHelper{
         $this->loadView('solicitacoes', $data);
     }
 
-    // public function home(){
-    //     $data = array();
+    public function buscar(){
+        $filtros = !empty($_POST['filtros']) ? $_POST['filtros'] : array();
 
-    //     $this->loadView('home', $data);
-    // }
+        $solicitacoes = $this->Solicitacoes->buscar($filtros);
+
+        $this->response(['solicitacoes' => $solicitacoes]);
+    }
 }
 
 ?>

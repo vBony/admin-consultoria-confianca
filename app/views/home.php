@@ -219,7 +219,7 @@
 							<div class="product-info">
 								<a href="javascript:void(0)" class="product-title">
 									Luciana Aparecida <span class="text-muted ms-2">2d</span>
-									<span class="badge badge-danger float-right">Spam</span>
+									<span class="badge badge-danger float-right">Reprovado</span>
 								</a>
 								<span class="product-description">
 									Não tenho nada de útil para enviar, então estou escrevendo qualquer coisa para irrita-los
