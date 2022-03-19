@@ -33,4 +33,14 @@ class Solicitacoes extends sanitazerHelper{
         $hora = date('H:i:s', strtotime($data));
         return $data .' às '. $hora;
     }
+
+    public static function naoAvaliador($registro){
+        $registro['ipId'] = null;
+        $registro['cpf'] = null;
+        $registro['cpfConjuge'] = null;
+        $registro['email'] = null;
+        $registro['formasContato'] = array();
+
+        return $registro;
+    }
 }

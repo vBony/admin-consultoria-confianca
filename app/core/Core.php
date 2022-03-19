@@ -36,7 +36,7 @@ class Core{
         }
 
         if(!file_exists('app/controllers/'.$currentController.'.php') || !method_exists($currentController, $currentAction)){
-            $currentController = 'notFoundController';
+            $currentController = 'naoEncontradoController';
             $currentAction = 'index';
         }
 
