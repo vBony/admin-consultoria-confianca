@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="<?=$baseUrl?>app/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
     <link rel="stylesheet" href="<?=$baseUrl?>app/assets/css/solicitacoes.css">
+    <link rel="stylesheet" href="<?=$baseUrl?>app/assets/css/normalize.css">
     <script src="<?=$baseUrl?>app/plugins/jquery/jquery.min.js"></script>
     <script src="<?=$baseUrl?>app/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script src="<?=$baseUrl?>app/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -161,8 +162,11 @@
                                                 <span class="badge badge-danger" v-if="solicitacao.statusAdmin == 3">Reprovado</span>
                                             </td>
                                             <td class="project-actions text-right">
-                                                <a class="btn btn-info btn-sm" href="#" data-toggle="popover" data-content="Disabled popover">
-                                                    Atender
+                                                <a class="btn btn-success btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-if="solicitacao.idAdmin == <?=$templateData['user']['id']?>">
+                                                    <i class="fas fa-pencil"></i> Continuar
+                                                </a>
+                                                <a class="btn btn-info btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-else>
+                                                    <i class="fas fa-eye"></i> Ver
                                                 </a>
                                             </td>
                                         </tr>

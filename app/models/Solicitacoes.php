@@ -34,6 +34,19 @@ class Solicitacoes extends modelHelper{
         }
     }
 
+    public function buscarPorId($id){
+        $sql  = "SELECT * FROM {$this->tabela} WHERE id = :id";
+        // exit($sql);
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':id', $id);
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            $data = $sql->fetch(PDO::FETCH_ASSOC);
+            return $this->montarRegistro($data);
+        }
+    }
+
     public function montarRegistros(array $registros){
         $retorno = array();
 
@@ -44,10 +57,24 @@ class Solicitacoes extends modelHelper{
         return $retorno;
     }
 
+    public function buscarParaAvaliacao($id, $idAdmin){
+        $solicitacao = $this->buscarPorId($id);
+
+        if($idAdmin != $solicitacao['idAdmin']){
+            return $this->montarNaoAvaliador($solicitacao);
+        }else{
+            return $solicitacao;
+        }
+    }
+
     public function montarRegistro($registro){
         $registro['formasContato'] = Sanitazer::showFormasContato($registro['formasContato']);
         $registro['createdAt'] = Sanitazer::showCreatedAt($registro['createdAt']);
         $registro['admin'] = $this->Admin->buscarPorId($registro['idAdmin']);
         return $registro;
+    }
+
+    public function montarNaoAvaliador($registro){
+        return Sanitazer::naoAvaliador($registro);
     }
 }
