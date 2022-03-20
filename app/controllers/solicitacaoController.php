@@ -2,7 +2,10 @@
 use auth\Admin as AuthAdmin;
 use models\Admin;
 use core\controllerHelper;
+use models\Estados;
 use models\Solicitacoes;
+use models\TipoImovel;
+
 class solicitacaoController extends controllerHelper{
     private $Admin;
     private $Solicitacoes;
@@ -53,7 +56,19 @@ class solicitacaoController extends controllerHelper{
 
         $solicitacao = $this->Solicitacoes->buscarParaAvaliacao($_SESSION['idSolicitacao'], $adminId);
 
-        $this->response(['solicitacao' => $solicitacao]);
+        $response = [
+            'solicitacao' => $solicitacao,
+            'listas' => $this->carregarListas()
+        ];
+
+        $this->response($response);
+    }
+
+    private function carregarListas(){
+        return [
+            'estados' => Estados::get(),
+            'tiposImovel' => TipoImovel::get(),
+        ];
     }
 }
 
