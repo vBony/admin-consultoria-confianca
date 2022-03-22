@@ -97,7 +97,7 @@
                             </div>
 
                             <div class="card-body" v-if="solicitacao.idAdmin > 0">
-                                <div class="alert alert-info" role="alert">
+                                <div class="alert alert-info" role="alert" v-if="idAdmin != solicitacao.idAdmin">
                                     <h6><i class="fas fa-info-circle me-2"></i> Atenção</h6>
                                     <p class="fs-12">
                                         Você não possui cargo e não é avaliador dessa solicitação. Por isso, não é possivel
@@ -118,7 +118,7 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>Formas de contato</label>
-                                            <button type="button" class="btn btn-block btn-success btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
+                                            <button type="button" class="btn btn-block btn-success btn-sm" :disabled="idAdmin != solicitacao.idAdmin" data-toggle="modal" data-target="#modalMensagemWhatsapp">
                                                 <i class="fab fa-whatsapp mr-1"></i>
                                                 Whatsapp
                                             </button>    
@@ -128,7 +128,7 @@
                                                 E-mail
                                             </button>
 
-                                            <button type="button" class="btn btn-block btn-secondary btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
+                                            <button type="button" class="btn btn-block btn-secondary btn-sm" :disabled="idAdmin != solicitacao.idAdmin" data-toggle="modal" data-target="#modalLigacao" @click="getTelefone()">
                                                 <i class="fas fa-phone-alt mr-1"></i>
                                                 Ligação
                                             </button>
@@ -151,7 +151,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="col-6 text-center">
-                                                    <button type="button" class="btn btn-block btn-success btn-sm" disabled>
+                                                    <button type="button" class="btn btn-block btn-success btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
                                                         <i class="fas fa-check"></i>
                                                         Aprovar
                                                     </button>
@@ -196,22 +196,6 @@
                                         <div class="form-group">
                                             <label>CPF Cônjuge</label>
                                             <input type="text" class="form-control" placeholder="CFP Cônjuge" :value="solicitacao.cpfConjuge" readonly="true">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-6 col-md-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label>Telefone</label>
-                                            <input type="text" class="form-control" placeholder="Telefone" :value="solicitacao.telefone" readonly="true">
-                                        </div>
-                                    </div>
-    
-                                    <div class="col-lg-6 col-md-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label>E-mail</label>
-                                            <input type="text" class="form-control" placeholder="E-mail" :value="solicitacao.email" readonly="true">
                                         </div>
                                     </div>
                                 </div>
@@ -278,6 +262,69 @@
                 </div>
             </div>
         </section>
+    </div>
+
+    <div class="modal fade" id="modalMensagemWhatsapp" tabindex="-1" role="dialog" aria-labelledby="mmwLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mmwLabel">Enviar mensagem via WhatsApp</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Mensagem</label>
+                                <textarea class="form-control" rows="3" placeholder="Digite aqui a sua mensagem" :value="mensagemWhatsapp"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success btn-sm">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalLigacao" tabindex="-1" role="dialog" aria-labelledby="ligacaoLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ligacaoLabel">Entrar em contato por ligação</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <h6><b> Como deseja prosseguir? </b></h6>
+                                <div class="row d-flex justify-content-around mt-2">
+                                    <button class="btn btn-primary mt-2" @click="ligarCliente()">
+                                        <i class="fas fa-phone-alt mr-2"></i>
+                                        Realizar ligação
+                                    </button>
+                                    <button class="btn btn-primary mt-2">
+                                        <i class="fas fa-clipboard mr-2"></i>
+                                        Copiar número
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success btn-sm">Enviar</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <input type="hidden" id="baseUrl" value="<?=$baseUrl?>">

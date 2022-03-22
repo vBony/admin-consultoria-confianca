@@ -64,7 +64,7 @@ class Solicitacoes extends modelHelper{
         if($idAdmin != $solicitacao['idAdmin']){
             return $this->montarNaoAvaliador($solicitacao);
         }else{
-            return $solicitacao;
+            return Sanitazer::semDadosContato($solicitacao);
         }
     }
 
@@ -109,6 +109,28 @@ class Solicitacoes extends modelHelper{
         return true;
     }
 
+    public function isAvaliador($id, $idAdmin){
+        $solicitacao = $this->buscarPorId($id);
+
+        if($solicitacao['idAdmin'] > 0){
+            if($solicitacao['idAdmin'] == $idAdmin){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+
+        return false;
+    }
+
+    public function telefone($id){
+        $solicitacao = $this->buscarPorId($id);
+
+        return $solicitacao['telefone'];
+    }
+
     public function montarRegistro($registro){
         $registro['formasContato'] = Sanitazer::showFormasContato($registro['formasContato']);
         $registro['createdAt'] = Sanitazer::showCreatedAt($registro['createdAt']);
@@ -119,4 +141,5 @@ class Solicitacoes extends modelHelper{
     public function montarNaoAvaliador($registro){
         return Sanitazer::naoAvaliador($registro);
     }
+
 }

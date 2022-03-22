@@ -42,4 +42,11 @@ class Solicitacoes extends sanitazerHelper{
 
         return $registro;
     }
+
+    public static function semDadosContato($registro){
+        $registro['telefone'] = null;
+        $registro['email'] = null;
+
+        return $registro;
+    }
 }

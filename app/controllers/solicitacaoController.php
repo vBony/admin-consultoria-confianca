@@ -85,7 +85,20 @@ class solicitacaoController extends controllerHelper{
         }
 
         if(!empty($idSolicitacao) && $this->Solicitacoes->tornarAvaliador($adminId, $idSolicitacao)){
-            $this->response(['solicitacao' => $this->Solicitacoes->buscarPorId($idSolicitacao)]);
+            $this->response(['solicitacao' => $this->Solicitacoes->buscarParaAvaliacao($idSolicitacao, $adminId)]);
+        }else{
+            $this->response(['error' => 'Não foi possível realizar essa solicitação, tente novamente mais tarde']);
+        }
+    }
+
+    public function telefoneCliente(){
+        $this->Auth->isLogged();
+        $adminId = $this->Auth->getIdUserLogged();
+
+        $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
+
+        if(!empty($idSolicitacao) && $this->Solicitacoes->isAvaliador($idSolicitacao, $adminId)){
+            $this->response(['telefone' => $this->Solicitacoes->telefone($idSolicitacao)]);
         }else{
             $this->response(['error' => 'Não foi possível realizar essa solicitação, tente novamente mais tarde']);
         }
