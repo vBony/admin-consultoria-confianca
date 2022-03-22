@@ -113,19 +113,15 @@ class Admin{
     }
 
     public function isLogged(){
-        echo '<pre>'; 
-        print_r($_SESSION);
-        echo '<pre>'; 
-        exit;
         if(!isset($_SESSION['userSession'])){
-            
-            // $this->goToLogin();
+            $this->goToLogin();
         }else{
             $tokenSession = $_SESSION['userSession']['accessToken']['token'];
             $idUser = $_SESSION['userSession']['accessToken']['idAdmin'];
 
             if(!empty($tokenSession) && !empty($idUser)){
                 if(!$this->validateToken($tokenSession, $idUser)){
+                    exit('token not valid');
                     $this->killSession();
                     $this->goToLogin();
                 }
