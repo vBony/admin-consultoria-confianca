@@ -119,6 +119,9 @@ class Admin{
             $tokenSession = $_SESSION['userSession']['accessToken']['token'];
             $idUser = $_SESSION['userSession']['accessToken']['idAdmin'];
 
+            echo "$tokenSession <br>";
+            echo "$idUser <br>";
+
             if(!empty($tokenSession) && !empty($idUser)){
                 if(!$this->validateToken($tokenSession, $idUser)){
                     exit('token not valid');
