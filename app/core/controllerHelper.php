@@ -33,6 +33,22 @@ class controllerHelper{
     public function response($data){
         echo json_encode($data);
     }
+
+    public function safeData($data, $key = null){
+        if(!empty($key)){
+            if(!isset($data[$key])){
+                return null;
+            }else{
+                return $data[$key];
+            }
+        }
+
+        if(!empty($data)){
+            return $data;
+        }else{
+            return null;
+        }
+    }
 }
 
 ?>

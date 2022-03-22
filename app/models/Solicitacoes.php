@@ -6,6 +6,7 @@ use \PDO;
 use \PDOException;
 use \models\sanitazers\Solicitacoes as Sanitazer;
 use \models\Admin;
+use \models\flags\StatusAvaliacao;
 
 class Solicitacoes extends modelHelper{
     private $tabela = "simulacao";
@@ -22,7 +23,7 @@ class Solicitacoes extends modelHelper{
 
     public function buscar(array $filtros){
         $sql  = "SELECT * FROM {$this->tabela}  ";
-        $sql .= "ORDER BY createdAt AND statusAdmin ";
+        $sql .= "ORDER BY createdAt DESC, statusAdmin DESC";
         // exit($sql);
         $sql = $this->db->prepare($sql);
 
@@ -65,6 +66,47 @@ class Solicitacoes extends modelHelper{
         }else{
             return $solicitacao;
         }
+    }
+
+    public function tornarAvaliador($adminId, $id){
+        $sql  = "UPDATE u316339274_c_confianca.simulacao ";
+        $sql .= "SET idAdmin = :idAdmin, statusAdmin= :statusAdmin ";
+        $sql .= "WHERE id=:id ";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':idAdmin', $adminId);
+        $sql->bindValue(':statusAdmin', StatusAvaliacao::emAtendimento());
+        $sql->bindValue(':id', $id);
+
+        try {
+            $this->db->beginTransaction();
+
+            $sql->execute();
+            $id = $this->db->lastInsertId(PDO::FETCH_ASSOC);
+            $this->db->commit();
+
+            return true;
+        } catch(PDOException $e) {
+            $this->db->rollback();
+
+            exit($e->getMessage());
+            // TODO: SALVAR ERRO NUMA TABELA DE LOG
+
+            return false;
+        }
+    }
+
+    public function podeTornarAvaliador($id, $idAdmin){
+        $solicitacao = $this->buscarPorId($id);
+
+        if($solicitacao['idAdmin'] > 0){
+            if($solicitacao['idAdmin'] != $idAdmin){
+                return false;
+            }else{
+                return 'already';
+            }
+        }
+
+        return true;
     }
 
     public function montarRegistro($registro){

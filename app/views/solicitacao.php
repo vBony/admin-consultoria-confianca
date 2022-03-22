@@ -22,7 +22,11 @@
     <script src="<?=$baseUrl?>app/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3"></script>
+    <link rel="stylesheet" href=".<?=$baseUrl?>app/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="<?=$baseUrl?>app/dist/js/adminlte.js"></script>
     <script src="<?=$baseUrl?>app/assets/js/template.js"></script>
 </head>
@@ -62,27 +66,50 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="card ">
-                            <div class="card-header">
+                            <div class="card-header d-flex flex-row align-items-center flex-wrap">
                                 <h3 class="card-title">Status da Avaliação</h3>
+                                <div class="ml-lg-auto ml-md-auto ml-sm-0 d-flex align-items-center">
+                                    <span class="badge badge-warning" v-if="solicitacao.statusAdmin == 0">Aguardando</span>
+                                    <span class="badge badge-info" v-if="solicitacao.statusAdmin == 1">Em Atendimento</span>
+                                    <span class="badge badge-success" v-if="solicitacao.statusAdmin == 2">Atendido</span>
+                                    <span class="badge badge-danger" v-if="solicitacao.statusAdmin == 3">Reprovado</span>
+                                </div>
                             </div>
 
                             <div class="card-body" v-if="solicitacao.idAdmin == 0">
+                                <div class="loading loading-statusAvaliacao" v-show="loadingStatusAvaliacao == true">
+                                    <div class="spinner-border text-white" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+
                                 <div class="alert alert-info" role="alert">
                                     <h6><i class="fas fa-info-circle me-2"></i> Atenção</h6>
-                                    <p class="fs-12">Para avaliar a solicitação e contatar o cliente é necessário ser um avaliador. Se deseja torna-se um, clique no botão abaixo</p>
+                                    <p class="fs-12">
+                                        Para avaliar a solicitação e contatar o cliente é necessário ser um avaliador. Se deseja torna-se um,
+                                        e ser responsável pela aprovação/reprovação, clique no botão abaixo
+                                    </p>
                                 </div>
 
                                 <div class="text-center">
-                                    <button class="btn btn-success">Tornar-se avaliador</button>
+                                    <button class="btn btn-success" @click="tornarAvaliador()">Tornar-se avaliador</button>
                                 </div>
                             </div>
 
                             <div class="card-body" v-if="solicitacao.idAdmin > 0">
+                                <div class="alert alert-info" role="alert">
+                                    <h6><i class="fas fa-info-circle me-2"></i> Atenção</h6>
+                                    <p class="fs-12">
+                                        Você não possui cargo e não é avaliador dessa solicitação. Por isso, não é possivel
+                                        Aprovar/Reprovar ou entrar em contato com o cliente.
+                                    </p>
+                                </div>
+
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>Avaliador</label>
-                                            <input type="text" class="form-control" placeholder="Nome" :value="solicitacao.admin.name" readonly="true">
+                                            <input type="text" class="form-control" placeholder="Nome" :value="idAdmin == solicitacao.idAdmin ? solicitacao.admin.name + ' (Você)' : solicitacao.admin.name" readonly="true">
                                         </div>
                                     </div>
                                 </div>
@@ -91,18 +118,17 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>Formas de contato</label>
-
-                                            <button type="button" class="btn btn-block btn-success btn-sm">
+                                            <button type="button" class="btn btn-block btn-success btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
                                                 <i class="fab fa-whatsapp mr-1"></i>
                                                 Whatsapp
                                             </button>    
 
-                                            <button type="button" class="btn btn-block btn-info btn-sm">
+                                            <button type="button" class="btn btn-block btn-info btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
                                                 <i class="fas fa-envelope mr-1"></i>
                                                 E-mail
                                             </button>
 
-                                            <button type="button" class="btn btn-block btn-secondary btn-sm">
+                                            <button type="button" class="btn btn-block btn-secondary btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
                                                 <i class="fas fa-phone-alt mr-1"></i>
                                                 Ligação
                                             </button>
@@ -119,7 +145,7 @@
 
                                             <div class="row">
                                                 <div class="col-6 text-center">
-                                                    <button type="button" class="btn btn-block btn-danger btn-sm">
+                                                    <button type="button" class="btn btn-block btn-danger btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
                                                         <i class="fas fa-times"></i>
                                                         Reprovar
                                                     </button>
@@ -242,7 +268,7 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>Observação</label>
-                                            <textarea class="form-control" rows="3" placeholder="Observação" readonly="true"></textarea>
+                                            <textarea class="form-control" rows="3" placeholder="Observação" readonly="true" :value="solicitacao.observacao"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -255,6 +281,6 @@
     </div>
 </div>
 <input type="hidden" id="baseUrl" value="<?=$baseUrl?>">
-<script src="<?=$baseUrl?>app/assets/js/solicitacao.js"></script>
+<script type="module" src="<?=$baseUrl?>app/assets/js/solicitacao.js"></script>
 </body>
 </html>

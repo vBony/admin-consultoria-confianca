@@ -3,6 +3,7 @@ Vue.createApp({
         return {
             idAdmin: 0,
             loading: false,
+            loadingStatusAvaliacao: 0,
             solicitacao: [],
             baseUrl: $('#baseUrl').val(),
             isAvaliador: false,
@@ -38,10 +39,75 @@ Vue.createApp({
                     this.idAdmin = data.id
                 }
             });
+        },
+        
+        tornarAvaliador(){
+            let idSolicitacao = this.solicitacao['id']
+
+            var data = new FormData();
+            data.append('idSolicitacao', idSolicitacao)
+            this.loadingStatusAvaliacao = true
+            $.ajax({
+                url: this.baseUrl+'api/solicitacao/tornar-avaliador',
+                data: {idSolicitacao: idSolicitacao},
+                type: "POST",
+                dataType: 'json',                
+                success: (data) => {
+                    if(data.error){
+                        Swal.fire(
+                            'Erro ao definir Avaliador',
+                            data.error,
+                            'error'
+                        )
+                    }
+
+                    if(data.solicitacao){
+                        this.solicitacao = data.solicitacao
+
+                        Swal.fire({
+                            text: 'Agora você é avaliador desta solicitação',
+                            icon: 'success',
+                            toast: true,
+                            position: 'top-right',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                    }
+                },
+                complete: () => {
+                    this.loadingStatusAvaliacao = false
+                }
+            });
+        },
+
+        teste(){
+            Swal.fire({
+                text: 'Agora você é avaliador desta solicitação',
+                icon: 'success',
+                toast: true,
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
         }
     },
 
     mounted(){
+
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+        
         this.buscarIdAdmin()
         this.buscarSolicitacao()
     },
