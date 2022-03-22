@@ -7,7 +7,8 @@ Vue.createApp({
             solicitacao: [],
             baseUrl: $('#baseUrl').val(),
             isAvaliador: false,
-            listas: []
+            listas: [],
+            mensagemWhatsapp: ''
         }
     },
 
@@ -85,21 +86,42 @@ Vue.createApp({
             });
         },
 
-        teste(){
-            Swal.fire({
-                text: 'Agora você é avaliador desta solicitação',
-                icon: 'success',
-                toast: true,
-                position: 'top-right',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+        ligarCliente(){
+            if(this.solicitacao['telefone']){
+                window.open(`tel:${this.solicitacao['telefone']}`, '_self')
+            }else{
+                alert("Não foi possível realizar essa ação.")
+            }
+        },
+
+        getTelefone(){
+            let idSolicitacao = this.solicitacao['id']
+
+            var data = new FormData();
+            data.append('idSolicitacao', idSolicitacao)
+
+            $.ajax({
+                url: this.baseUrl+'api/solicitacao/telefone-cliente',
+                data: {idSolicitacao: idSolicitacao},
+                type: "POST",
+                dataType: 'json',                
+                success: (data) => {
+                    if(data.telefone){
+                        this.solicitacao['telefone'] = data.telefone
+                    }else{
+                        if(data.error){
+                            alert(data.error)
+                        }else{
+                            alert("Houve um erro na requisição.")
+                        }
+                    }
+                },
+                complete: () => {
+                    this.loadingStatusAvaliacao = false
                 }
-            })
+            });
         }
+        
     },
 
     mounted(){
