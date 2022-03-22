@@ -119,12 +119,8 @@ class Admin{
             $tokenSession = $_SESSION['userSession']['accessToken']['token'];
             $idUser = $_SESSION['userSession']['accessToken']['idAdmin'];
 
-            echo "$tokenSession <br>";
-            echo "$idUser <br>";
-
             if(!empty($tokenSession) && !empty($idUser)){
                 if(!$this->validateToken($tokenSession, $idUser)){
-                    exit('token not valid');
                     $this->killSession();
                     $this->goToLogin();
                 }
@@ -141,12 +137,20 @@ class Admin{
         $now = date('Y-m-d H:i:s');
 
         $tokenFind = $ModelToken->buscarPorToken($token);
+        echo '<pre>'; 
+        print_r($tokenFind);
+        echo '<pre> <br><br>'; 
 
         if(!empty($tokenFind)){
             if($tokenFind['idAdmin'] == $idUser){
+                echo "idAdmin OK <br>";
                 if($ip == $tokenFind['ip']){
+                    echo "ip OK <br>";
                     if($tokenFind['active'] == 1){
+                        echo "ativo <br>";
                         if($now > $tokenFind['createdAt'] && $now < $tokenFind['validUntil']){
+                            echo "no tempo <br>";
+                            exit;
                             return true;
                         }
                     }
