@@ -150,13 +150,13 @@ class Admin{
                         echo "ativo <br>";
                         if($now > $tokenFind['createdAt'] && $now < $tokenFind['validUntil']){
                             echo "no tempo <br>";
-                            exit;
                             return true;
                         }
                     }
                 }
             }
-
+            
+            exit;
             return false;
         }else{
             return false;
