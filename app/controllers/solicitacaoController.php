@@ -2,7 +2,10 @@
 use auth\Admin as AuthAdmin;
 use models\Admin;
 use core\controllerHelper;
+use models\Estados;
 use models\Solicitacoes;
+use models\TipoImovel;
+
 class solicitacaoController extends controllerHelper{
     private $Admin;
     private $Solicitacoes;
@@ -53,7 +56,46 @@ class solicitacaoController extends controllerHelper{
 
         $solicitacao = $this->Solicitacoes->buscarParaAvaliacao($_SESSION['idSolicitacao'], $adminId);
 
-        $this->response(['solicitacao' => $solicitacao]);
+        $response = [
+            'solicitacao' => $solicitacao,
+            'listas' => $this->carregarListas()
+        ];
+
+        $this->response($response);
+    }
+
+    public function tornarAvaliador(){
+        $this->Auth->isLogged();
+
+        $adminId = $this->Auth->getIdUserLogged();
+        $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
+
+        $podeTornarAvaliador = $this->Solicitacoes->podeTornarAvaliador($idSolicitacao, $adminId);
+
+        if($podeTornarAvaliador !== true){
+            $message = '';
+
+            if($podeTornarAvaliador == 'already'){
+                $message = "Você já é avaliador dessa solicitação";
+            }elseif($podeTornarAvaliador === false){
+                $message = "Já existe um avaliador para esta solicitação";
+            }
+
+            return $this->response(['error' => $message]);
+        }
+
+        if(!empty($idSolicitacao) && $this->Solicitacoes->tornarAvaliador($adminId, $idSolicitacao)){
+            $this->response(['solicitacao' => $this->Solicitacoes->buscarPorId($idSolicitacao)]);
+        }else{
+            $this->response(['error' => 'Não foi possível realizar essa solicitação, tente novamente mais tarde']);
+        }
+    }
+
+    private function carregarListas(){
+        return [
+            'estados' => Estados::get(),
+            'tiposImovel' => TipoImovel::get(),
+        ];
     }
 }
 

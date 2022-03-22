@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard | Consultoria Confiança</title>
+    <title>Solicitações | Consultoria Confiança</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
@@ -22,6 +22,8 @@
     <script src="<?=$baseUrl?>app/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3"></script>
     <script src="<?=$baseUrl?>app/dist/js/adminlte.js"></script>
     <script src="<?=$baseUrl?>app/assets/js/template.js"></script>
@@ -145,12 +147,16 @@
                                                     {{solicitacao.nome}}
                                                 </a>
                                                 <br/>
-                                                <small>
-                                                    Criado em {{solicitacao.createdAt}}
+                                                <small class="text-muted">
+                                                    <b>
+                                                        {{solicitacao.createdAt}}
+                                                    </b>
                                                 </small>
                                             </td>
-                                            <td class="avatar-responsavel text-center" v-show="solicitacao.idAdmin > 0">
-                                                <img :src="solicitacao.admin.urlAvatar" class="img-circle elevation-2" alt="User Image" :title="solicitacao.admin.name">
+                                            <td class="avatar-responsavel text-center admin-data" v-show="solicitacao.idAdmin > 0">
+                                                <img :src="solicitacao.admin.urlAvatar" class="img-circle elevation-2" alt="User Image" :title="solicitacao.admin.name" data-trigger="hover" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">
+                                                <span class="name-admin" v-if="solicitacao.idAdmin == idAdmin">(Você)</span>
+                                                <span class="name-admin" v-else>{{solicitacao.admin.name}}</span>
                                             </td>
                                             <td class="avatar-responsavel text-center" v-show="solicitacao.idAdmin == 0">
                                                 <b>-</b>
@@ -162,11 +168,16 @@
                                                 <span class="badge badge-danger" v-if="solicitacao.statusAdmin == 3">Reprovado</span>
                                             </td>
                                             <td class="project-actions text-right">
-                                                <a class="btn btn-success btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-if="solicitacao.idAdmin == <?=$templateData['user']['id']?>">
-                                                    <i class="fas fa-pencil"></i> Continuar
+                                                <a class="btn btn-primary btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-if="solicitacao.idAdmin == idAdmin">
+                                                    <i class="fas fa-reply"></i>
                                                 </a>
-                                                <a class="btn btn-info btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-else>
-                                                    <i class="fas fa-eye"></i> Ver
+
+                                                <a class="btn btn-secondary btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-else-if="solicitacao.statusAdmin == 1 && solicitacao.idAdmin != idAdmin">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+
+                                                <a class="btn btn-success btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-else>
+                                                    <i class="fas fa-plus"></i>
                                                 </a>
                                             </td>
                                         </tr>

@@ -7,7 +7,8 @@ Vue.createApp({
                 teste:'teste'
             },
             baseUrl: $('#baseUrl').val(),
-            solicitacoes: []
+            solicitacoes: [],
+            idAdmin: 0
         }
     },
 
@@ -15,7 +16,7 @@ Vue.createApp({
         buscarSolicitacoes(){
             var data = new FormData();
             data.append('filtros', this.filtros)
-            this.loading = true
+            
             $.ajax({
                 url: this.baseUrl+'solicitacoes/buscar',
                 type: "POST",             
@@ -23,18 +24,35 @@ Vue.createApp({
                 dataType: 'json',                
                 success: (data) => {
                     this.solicitacoes = data.solicitacoes
-                },
-                complete: () => {
-                    this.loading = false
+                }
+            });
+        },
+
+        buscarIdAdmin(){
+            $.ajax({
+                url: this.baseUrl+'api/auth/id',
+                type: "POST",
+                dataType: 'json',                
+                success: (data) => {
+                    this.idAdmin = data.id
                 }
             });
         }
     },
 
     mounted(){
-        $('[data-toggle=popover]').popover({
-            trigger: 'hover',
-        });
+
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+
+        this.loading = true
+        this.buscarIdAdmin()
+        this.loading = false
         this.buscarSolicitacoes()
-    },
+
+        setInterval(() => {
+            this.buscarSolicitacoes()
+        }, 30000);
+    }
 }).mount('#app')

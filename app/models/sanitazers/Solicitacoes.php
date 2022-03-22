@@ -29,9 +29,7 @@ class Solicitacoes extends sanitazerHelper{
     }
 
     public static function showCreatedAt($data){
-        $data = date('d/m/Y', strtotime($data));
-        $hora = date('H:i:s', strtotime($data));
-        return $data .' às '. $hora;
+        return (new sanitazerHelper())->diferencaDatasPorExtenso($data, 'passado_simples');
     }
 
     public static function naoAvaliador($registro){
@@ -40,6 +38,7 @@ class Solicitacoes extends sanitazerHelper{
         $registro['cpfConjuge'] = null;
         $registro['email'] = null;
         $registro['formasContato'] = array();
+        $registro['telefone'] = null;
 
         return $registro;
     }
