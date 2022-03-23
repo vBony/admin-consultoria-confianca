@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
     <link rel="stylesheet" href="<?=$baseUrl?>app/assets/css/solicitacao.css">
     <link rel="stylesheet" href="<?=$baseUrl?>app/assets/css/normalize.css">
+    <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/summernote/summernote-bs4.min.css">
     <script src="<?=$baseUrl?>app/plugins/jquery/jquery.min.js"></script>
     <script src="<?=$baseUrl?>app/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script src="<?=$baseUrl?>app/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -123,7 +124,7 @@
                                                 Whatsapp
                                             </button>    
 
-                                            <button type="button" class="btn btn-block btn-info btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
+                                            <button type="button" class="btn btn-block btn-info btn-sm" :disabled="idAdmin != solicitacao.idAdmin" data-toggle="modal" data-target="#modalEmail">
                                                 <i class="fas fa-envelope mr-1"></i>
                                                 E-mail
                                             </button>
@@ -301,6 +302,13 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class="overlay" v-if="loadingTelefone == true">
+                        <div class="spinner-border text-white" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
+                        <div class="text-white fs-4">Carregando...</div>
+                    </div>
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">
@@ -310,7 +318,7 @@
                                         <i class="fas fa-phone-alt mr-2"></i>
                                         Realizar ligação
                                     </button>
-                                    <button class="btn btn-primary mt-2">
+                                    <button class="btn btn-primary mt-2" @click="copiarNumeroCliente()">
                                         <i class="fas fa-clipboard mr-2"></i>
                                         Copiar número
                                     </button>
@@ -326,8 +334,72 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalEmail" tabindex="-1" role="dialog" aria-labelledby="emailLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emailLabel">Entrar em contato por E-mail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="overlay" v-if="loadingTelefone == true">
+                        <div class="spinner-border text-white" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
+                        <div class="text-white fs-4">Carregando...</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Para: </label>
+                                <input type="email"  class="form-control" readonly="true" :value="solicitacao.email">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Assunto: </label>
+                                <input type="text"  class="form-control" :value="'blablabla'">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <textarea id="compose-textarea" class="form-control">
+                                    
+                                </textarea>
+                            </div>
+                            <div class="form-group">
+                                <div class="btn btn-default btn-file">
+                                    <i class="fas fa-paperclip"></i> Attachment
+                                    <input type="file" name="attachment">
+                                </div>
+                                <p class="help-block">Max. 32MB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success btn-sm">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <input type="hidden" id="baseUrl" value="<?=$baseUrl?>">
+<script src="<?=$baseUrl?>app/plugins/summernote/summernote-bs4.min.js"></script>
 <script type="module" src="<?=$baseUrl?>app/assets/js/solicitacao.js"></script>
+<script>
+  $(function () {
+    //Add text editor
+    $('#compose-textarea').summernote({
+        height: 200
+    })
+  })
+</script>
 </body>
 </html>
