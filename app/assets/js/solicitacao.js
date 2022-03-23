@@ -4,6 +4,7 @@ Vue.createApp({
             idAdmin: 0,
             loading: false,
             loadingStatusAvaliacao: 0,
+            loadingTelefone: false,
             solicitacao: [],
             baseUrl: $('#baseUrl').val(),
             isAvaliador: false,
@@ -100,6 +101,7 @@ Vue.createApp({
             var data = new FormData();
             data.append('idSolicitacao', idSolicitacao)
 
+            this.loadingTelefone = true
             $.ajax({
                 url: this.baseUrl+'api/solicitacao/telefone-cliente',
                 data: {idSolicitacao: idSolicitacao},
@@ -117,14 +119,32 @@ Vue.createApp({
                     }
                 },
                 complete: () => {
-                    this.loadingStatusAvaliacao = false
+                    this.loadingTelefone = false
                 }
             });
+        },
+        
+        copiarNumeroCliente(){
+
+            if(this.solicitacao['telefone']){
+                navigator.clipboard.writeText(this.solicitacao['telefone']);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Telefone copiado!',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+            }else{
+                alert("Não foi possível realizar essa ação.")
+            }
         }
         
     },
 
     mounted(){
+        
 
         $(function () {
             $('[data-toggle="popover"]').popover()
