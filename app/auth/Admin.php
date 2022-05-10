@@ -143,10 +143,7 @@ class Admin{
                 if($ip == $tokenFind['ip']){
                     if($tokenFind['active'] == 1){
                         if(strtotime($now) > strtotime($tokenFind['createdAt']) && strtotime($now) < strtotime($tokenFind['validUntil'])){
-                            exit('ok');
                             return true;
-                        }else{
-                            exit('caiu aqui');
                         }
                     }
                 }
