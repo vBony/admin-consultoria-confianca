@@ -45,4 +45,20 @@ class sanitazerHelper {
 
         return $restanteValidade;
     }
+
+    public function dataNormal($data){
+        return date('d/m/Y',  strtotime($data));
+    }
+
+    public function hora($data){
+        return date('H:i:s',  strtotime($data));
+    }
+
+    public function dataEHora($data, $divider = false){
+        if(!$divider){
+            return date('d/m/Y H:i:s',  strtotime($data));
+        }else{
+            return date('d/m/Y à\s H:i:s',  strtotime($data));
+        }
+    }
 }

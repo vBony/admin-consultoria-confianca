@@ -2,19 +2,24 @@
 namespace models\flags;
 
 class StatusAvaliacao {
+    private static $aguardando = 0;
+    private static $emAtendimento = 1;
+    private static $atendido = 2;
+    private static $reprovado = 3;
+
     public static function aguardando(){
-        return 0;
+        return self::$aguardando;
     }
 
     public static function emAtendimento(){
-        return 1;
+        return self::$emAtendimento;
     }
 
     public static function atendido(){
-        return 2;
+        return self::$atendido;
     }
 
     public static function reprovado(){
-        return 3;
+        return self::$reprovado;
     }
 }
