@@ -9,7 +9,8 @@ Vue.createApp({
             baseUrl: $('#baseUrl').val(),
             isAvaliador: false,
             listas: [],
-            mensagemWhatsapp: ''
+            mensagemWhatsapp: '',
+            mensagemEmail: ''
         }
     },
 

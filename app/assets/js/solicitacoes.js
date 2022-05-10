@@ -24,17 +24,22 @@ Vue.createApp({
                 dataType: 'json',                
                 success: (data) => {
                     this.solicitacoes = data.solicitacoes
-                }
+                },
             });
         },
 
         buscarIdAdmin(){
+            this.loading = true
+
             $.ajax({
                 url: this.baseUrl+'api/auth/id',
                 type: "POST",
                 dataType: 'json',                
                 success: (data) => {
                     this.idAdmin = data.id
+                },
+                complete: () => {
+                    this.loading = false
                 }
             });
         }
@@ -46,9 +51,7 @@ Vue.createApp({
             $('[data-toggle="popover"]').popover()
         })
 
-        this.loading = true
         this.buscarIdAdmin()
-        this.loading = false
         this.buscarSolicitacoes()
 
         setInterval(() => {
