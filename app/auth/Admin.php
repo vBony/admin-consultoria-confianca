@@ -135,14 +135,15 @@ class Admin{
 
         $ip = $this->getIpUser();
         $now = date('Y-m-d H:i:s');
-
+        
         $tokenFind = $ModelToken->buscarPorToken($token);
 
         if(!empty($tokenFind)){
             if($tokenFind['idAdmin'] == $idUser){
                 if($ip == $tokenFind['ip']){
                     if($tokenFind['active'] == 1){
-                        if($now > $tokenFind['createdAt'] && $now < $tokenFind['validUntil']){
+                        if(strtotime($now) > strtotime($tokenFind['createdAt']) && strtotime($now) < strtotime($tokenFind['validUntil'])){
+                            exit('ok');
                             return true;
                         }else{
                             exit('caiu aqui');
