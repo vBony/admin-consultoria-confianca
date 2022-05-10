@@ -142,7 +142,7 @@ class Admin{
             if($tokenFind['idAdmin'] == $idUser){
                 if($ip == $tokenFind['ip']){
                     if($tokenFind['active'] == 1){
-                        if($now > $tokenFind['createdAt'] && $now < $tokenFind['validUntil']){
+                        if(strtotime($now) > strtotime($tokenFind['createdAt']) && strtotime($now) < strtotime($tokenFind['validUntil'])){
                             return true;
                         }
                     }
