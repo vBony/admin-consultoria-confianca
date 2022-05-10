@@ -144,6 +144,8 @@ class Admin{
                     if($tokenFind['active'] == 1){
                         if($now > $tokenFind['createdAt'] && $now < $tokenFind['validUntil']){
                             return true;
+                        }else{
+                            exit('caiu aqui');
                         }
                     }
                 }
