@@ -64,10 +64,8 @@ class Admin{
         $tokenFound = $ModelToken->buscarPorIp($ip, $userData['id']);
 
         if(!empty($tokenFound)){
-            exit('reciclando token');
             $data['accessToken'] = $this->setAccessToken($userData, $tokenFound['id'], true);
         }else{
-            exit('criando token');
             $data['accessToken'] = $this->setAccessToken($userData);
         }
 
@@ -90,6 +88,7 @@ class Admin{
         $data['token'] = $this->setToken($userData);
 
         if(!$recycle && $id != null){
+            exit('aqui');
             if($ModelToken->criar($data)){
                 return $data;
             }
