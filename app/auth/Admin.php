@@ -87,7 +87,7 @@ class Admin{
         $data['validUntil'] = $this->setTokenLifeTime();
         $data['token'] = $this->setToken($userData);
 
-        if(!$recycle && $id != null){
+        if(!$recycle && $id == null){
             if($ModelToken->criar($data)){
                 return $data;
             }
