@@ -88,7 +88,6 @@ class Admin{
         $data['token'] = $this->setToken($userData);
 
         if(!$recycle && $id != null){
-            exit('aqui');
             if($ModelToken->criar($data)){
                 return $data;
             }
