@@ -33,7 +33,6 @@ class Admin{
             if(!empty($userFind)){
                 if($this->validatePassword($data['password'], $userFind['password'])){
                     $this->setSession($userFind);
-
                     return true;
                 }else{
                     $messages['password'] = 'Senha inválida';
@@ -46,7 +45,6 @@ class Admin{
         }
 
         return $messages;
-        
     }
 
     public function logout(){
@@ -59,10 +57,20 @@ class Admin{
 
     public function setSession($userData){
         $data = array();
-        $this->killSession();
+
+        $ip = $this->getIpUser();
+
+        $ModelToken = new AccessToken();
+        $tokenFound = $ModelToken->buscarPorIp($ip, $userData['id']);
+
+        if(!empty($tokenFound)){
+            $data['accessToken'] = $this->setAccessToken($userData, $tokenFound['id'], true);
+        }else{
+            exit('incorreto');
+            $data['accessToken'] = $this->setAccessToken($userData);
+        }
 
         $data['user'] = $userData;
-        $data['accessToken'] = $this->setAccessToken($userData);
 
         $_SESSION['userSession'] = $data;
     }
@@ -71,7 +79,7 @@ class Admin{
         return $_SESSION['userSession']['accessToken']['idAdmin'];
     }
 
-    public function setAccessToken($userData){
+    public function setAccessToken($userData, $id = null, $recycle = false){
         $ModelToken = new AccessToken();
         $data = array();
         $data['ip'] = $this->getIpUser();
@@ -80,10 +88,16 @@ class Admin{
         $data['validUntil'] = $this->setTokenLifeTime();
         $data['token'] = $this->setToken($userData);
 
-        if($ModelToken->criar($data)){
-            return $data;
+        if(!$recycle && $id != null){
+            if($ModelToken->criar($data)){
+                return $data;
+            }
+        }else{
+            $data['id'] = $id;
+            if($ModelToken->recycleToken($data)){
+                return $data;
+            }
         }
-
     }
 
     public function getIpUser(){
@@ -138,10 +152,15 @@ class Admin{
         
         $tokenFind = $ModelToken->buscarPorToken($token);
 
+        // Token existe?
         if(!empty($tokenFind)){
+            // O usuário é dono desse token?
             if($tokenFind['idAdmin'] == $idUser){
+                // O ip do usuário é o mesmo do token?
                 if($ip == $tokenFind['ip']){
+                    // Esse token está ativo?
                     if($tokenFind['active'] == 1){
+                        // Esse token está vencido?
                         if(strtotime($now) > strtotime($tokenFind['createdAt']) && strtotime($now) < strtotime($tokenFind['validUntil'])){
                             return true;
                         }
