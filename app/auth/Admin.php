@@ -174,6 +174,8 @@ class Admin{
                     }
                 }
             }
+
+            exit;
             
             return false;
         }else{
