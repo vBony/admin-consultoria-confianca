@@ -10,3 +10,4 @@ $routes['/api/auth/id'] = '/auth/id';
 $routes['/api/solicitacao/tornar-avaliador'] = '/solicitacao/tornarAvaliador';
 $routes['/api/solicitacao/telefone-cliente'] = '/solicitacao/telefoneCliente';
 $routes['/api/solicitacao/aprovar'] = '/solicitacao/aprovar';
+$routes['/logout'] = '/login/logout';

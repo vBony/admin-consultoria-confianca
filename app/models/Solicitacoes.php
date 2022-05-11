@@ -14,7 +14,6 @@ class Solicitacoes extends modelHelper{
     private $tableContato = "contato";
     private $sanitazerHelper;
     static private $formasContato = ['whatsapp', 'email', 'ligacao'];
-    
 
     private $Admin;
 

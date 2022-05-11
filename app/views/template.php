@@ -108,7 +108,7 @@
 						</a>
 					</li>
 
-					<a href="#" id="logout-btn" class="nav-link align-self-baseline">
+					<a href="<?=$baseUrl?>logout" id="logout-btn" class="nav-link align-self-baseline">
 						<i class="nav-icon fas fa-sign-out-alt"></i>
 						<p>
 							Sair

@@ -8,6 +8,11 @@ use \PDOException;
 class AccessToken extends modelHelper{
     private $table = 'accessToken';
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function buscarPorId($id){
         $sql = "SELECT * FROM {$this->table} WHERE id = :id";
         $sql = $this->db->prepare($sql);
