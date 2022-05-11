@@ -160,7 +160,7 @@ class Admin{
                     // Esse token está ativo?
                     if($tokenFind['active'] == 1){
                         // Esse token está vencido?
-                        if(strtotime($now) > strtotime($tokenFind['createdAt']) && strtotime($now) < strtotime($tokenFind['validUntil'])){
+                        if(strtotime($now) < strtotime($tokenFind['validUntil'])){
                             return true;
                         }
                     }
