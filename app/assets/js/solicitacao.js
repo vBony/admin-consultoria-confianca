@@ -9,7 +9,8 @@ Vue.createApp({
             baseUrl: $('#baseUrl').val(),
             isAvaliador: false,
             listas: [],
-            mensagemWhatsapp: ''
+            mensagemWhatsapp: '',
+            mensagemEmail: ''
         }
     },
 
@@ -139,9 +140,48 @@ Vue.createApp({
             }else{
                 alert("Não foi possível realizar essa ação.")
             }
-        }
+        },
         
+        confirmaAprovacao(){
+            let idSolicitacao = this.solicitacao['id']
+
+            var data = new FormData();
+            data.append('idSolicitacao', idSolicitacao)
+
+            Swal.fire({
+                title: 'Confirma aprovação',
+                text: "Confirma a aprovação dessa solicitação?",
+                showCancelButton: true,
+                confirmButtonText: 'Sim',
+                cancelButtonText: 'Não',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('Aguarde um momento...', '', '')
+                    Swal.showLoading()
+
+                    $.ajax({
+                        url: this.baseUrl+'api/solicitacao/aprovar',
+                        data: {idSolicitacao: idSolicitacao},
+                        type: "POST",
+                        dataType: 'json',                
+                        success: (data) => {
+                            if(data.success){
+                                this.solicitacao['statusAdmin'] = data.status
+                                this.solicitacao['adminDate'] = data.date
+                                Swal.fire('Sucesso', 'Solicitação aprovada com sucesso', 'success')
+                            }else if(data.error){
+                                Swal.fire('Erro', data.error, 'error')
+                            }else{
+                                Swal.fire('Erro', "Houve um erro na requisição, tente novamente mais tarde", 'error')  
+                            }
+                        }
+                    });
+                }
+            })
+        }
     },
+
 
     mounted(){
         

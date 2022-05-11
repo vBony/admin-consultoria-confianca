@@ -172,7 +172,7 @@
                                                     <i class="fas fa-reply"></i>
                                                 </a>
 
-                                                <a class="btn btn-secondary btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-else-if="solicitacao.statusAdmin == 1 && solicitacao.idAdmin != idAdmin">
+                                                <a class="btn btn-secondary btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-else-if="solicitacao.statusAdmin == 1 || solicitacao.statusAdmin == 2 && solicitacao.idAdmin != idAdmin">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
 

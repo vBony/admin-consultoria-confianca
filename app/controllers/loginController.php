@@ -30,7 +30,8 @@ class loginController extends controllerHelper{
 
     public function logout(){
         $this->Auth->logout();
-        $this->response(['success' => 1]);
+        header("Location: ".$this->baseUrl()."login");
+        // $this->response(['success' => 1]);
     }
 }
 ?>

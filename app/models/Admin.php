@@ -8,6 +8,11 @@ use core\controllerHelper;
 class Admin extends modelHelper{
     private $table = 'admin';
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function cadastrar($data){
         $sql = "INSERT INTO {$this->table}
         (name, lastName, email, urlAvatar, password, idHierarchy, createdAt, updatedAt)

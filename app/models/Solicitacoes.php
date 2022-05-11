@@ -7,10 +7,12 @@ use \PDOException;
 use \models\sanitazers\Solicitacoes as Sanitazer;
 use \models\Admin;
 use \models\flags\StatusAvaliacao;
+use sanitazerHelper;
 
 class Solicitacoes extends modelHelper{
     private $tabela = "simulacao";
     private $tableContato = "contato";
+    private $sanitazerHelper;
     static private $formasContato = ['whatsapp', 'email', 'ligacao'];
 
     private $Admin;
@@ -19,6 +21,7 @@ class Solicitacoes extends modelHelper{
     {
         parent::__construct();
         $this->Admin = new Admin();
+        $this->sanitazerHelper = new sanitazerHelper();
     }
 
     public function buscar(array $filtros){
@@ -69,7 +72,7 @@ class Solicitacoes extends modelHelper{
     }
 
     public function tornarAvaliador($adminId, $id){
-        $sql  = "UPDATE u316339274_c_confianca.simulacao ";
+        $sql  = "UPDATE {$this->tabela} ";
         $sql .= "SET idAdmin = :idAdmin, statusAdmin= :statusAdmin ";
         $sql .= "WHERE id=:id ";
         $sql = $this->db->prepare($sql);
@@ -88,6 +91,32 @@ class Solicitacoes extends modelHelper{
         } catch(PDOException $e) {
             $this->db->rollback();
 
+            exit($e->getMessage());
+            // TODO: SALVAR ERRO NUMA TABELA DE LOG
+
+            return false;
+        }
+    }
+
+    public function aprovar($idSolicitacao){
+        $sql  = "UPDATE {$this->tabela} ";
+        $sql .= "SET statusAdmin = :statusAdmin, adminDate = :adminDate ";
+        $sql .= "WHERE id=:id ";
+
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':statusAdmin', StatusAvaliacao::atendido());
+        $sql->bindValue(':adminDate', $this->createdAt());
+        $sql->bindValue(':id', $idSolicitacao);
+
+        try {
+            $this->db->beginTransaction();
+
+            $sql->execute();
+            $this->db->commit();
+
+            return true;
+        } catch(PDOException $e) {
+            $this->db->rollback();
             exit($e->getMessage());
             // TODO: SALVAR ERRO NUMA TABELA DE LOG
 
@@ -132,9 +161,12 @@ class Solicitacoes extends modelHelper{
     }
 
     public function montarRegistro($registro){
+        $backupAdminDate = $registro['adminDate'];
+
         $registro['formasContato'] = Sanitazer::showFormasContato($registro['formasContato']);
         $registro['createdAt'] = Sanitazer::showCreatedAt($registro['createdAt']);
         $registro['admin'] = $this->Admin->buscarPorId($registro['idAdmin']);
+        $registro['adminDate'] = $this->sanitazerHelper->dataEHora($registro['adminDate'], true);
         return $registro;
     }
 

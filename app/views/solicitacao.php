@@ -98,11 +98,16 @@
                             </div>
 
                             <div class="card-body" v-if="solicitacao.idAdmin > 0">
-                                <div class="alert alert-info" role="alert" v-if="idAdmin != solicitacao.idAdmin">
+                                <div class="alert alert-info" role="alert" v-show="idAdmin != solicitacao.idAdmin">
                                     <h6><i class="fas fa-info-circle me-2"></i> Atenção</h6>
                                     <p class="fs-12">
                                         Você não possui cargo e não é avaliador dessa solicitação. Por isso, não é possivel
                                         Aprovar/Reprovar ou entrar em contato com o cliente.
+                                    </p>
+                                </div>
+                                <div class="alert alert-success" role="alert" v-show="solicitacao.statusAdmin == 2">
+                                    <p class="fs-12">
+                                        <i class="fas fa-check-circle me-2"></i> Solicitação aprovada no dia {{solicitacao.adminDate}}
                                     </p>
                                 </div>
 
@@ -119,17 +124,17 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>Formas de contato</label>
-                                            <button type="button" class="btn btn-block btn-success btn-sm" :disabled="idAdmin != solicitacao.idAdmin" data-toggle="modal" data-target="#modalMensagemWhatsapp">
+                                            <button type="button" class="btn btn-block btn-success btn-sm" :disabled="idAdmin != solicitacao.idAdmin || !solicitacao.formasContato.includes('Whatsapp') || solicitacao.statusAdmin != 1" data-toggle="modal" data-target="#modalMensagemWhatsapp">
                                                 <i class="fab fa-whatsapp mr-1"></i>
                                                 Whatsapp
                                             </button>    
 
-                                            <button type="button" class="btn btn-block btn-info btn-sm" :disabled="idAdmin != solicitacao.idAdmin" data-toggle="modal" data-target="#modalEmail">
+                                            <button type="button" class="btn btn-block btn-info btn-sm" :disabled="idAdmin != solicitacao.idAdmin || !solicitacao.formasContato.includes('Email') || solicitacao.statusAdmin != 1" data-toggle="modal" data-target="#modalEmail">
                                                 <i class="fas fa-envelope mr-1"></i>
                                                 E-mail
                                             </button>
 
-                                            <button type="button" class="btn btn-block btn-secondary btn-sm" :disabled="idAdmin != solicitacao.idAdmin" data-toggle="modal" data-target="#modalLigacao" @click="getTelefone()">
+                                            <button type="button" class="btn btn-block btn-secondary btn-sm" :disabled="idAdmin != solicitacao.idAdmin || !solicitacao.formasContato.includes('Ligacao') || solicitacao.statusAdmin != 1" data-toggle="modal" data-target="#modalLigacao" @click="getTelefone()">
                                                 <i class="fas fa-phone-alt mr-1"></i>
                                                 Ligação
                                             </button>
@@ -146,13 +151,13 @@
 
                                             <div class="row">
                                                 <div class="col-6 text-center">
-                                                    <button type="button" class="btn btn-block btn-danger btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
+                                                    <button type="button" class="btn btn-block btn-danger btn-sm" :disabled="idAdmin != solicitacao.idAdmin || solicitacao.statusAdmin != 1">
                                                         <i class="fas fa-times"></i>
                                                         Reprovar
                                                     </button>
                                                 </div>
                                                 <div class="col-6 text-center">
-                                                    <button type="button" class="btn btn-block btn-success btn-sm" :disabled="idAdmin != solicitacao.idAdmin">
+                                                    <button type="button" class="btn btn-block btn-success btn-sm" :disabled="idAdmin != solicitacao.idAdmin || solicitacao.statusAdmin != 1" @click="confirmaAprovacao()">
                                                         <i class="fas fa-check"></i>
                                                         Aprovar
                                                     </button>
@@ -368,16 +373,7 @@
 
                         <div class="col-12">
                             <div class="form-group">
-                                <textarea id="compose-textarea" class="form-control">
-                                    
-                                </textarea>
-                            </div>
-                            <div class="form-group">
-                                <div class="btn btn-default btn-file">
-                                    <i class="fas fa-paperclip"></i> Attachment
-                                    <input type="file" name="attachment">
-                                </div>
-                                <p class="help-block">Max. 32MB</p>
+                                <textarea class="form-control" rows="5" placeholder="Digite aqui a sua mensagem" :value="mensagemEmail"></textarea>
                             </div>
                         </div>
                     </div>
@@ -393,13 +389,5 @@
 <input type="hidden" id="baseUrl" value="<?=$baseUrl?>">
 <script src="<?=$baseUrl?>app/plugins/summernote/summernote-bs4.min.js"></script>
 <script type="module" src="<?=$baseUrl?>app/assets/js/solicitacao.js"></script>
-<script>
-  $(function () {
-    //Add text editor
-    $('#compose-textarea').summernote({
-        height: 200
-    })
-  })
-</script>
 </body>
 </html>

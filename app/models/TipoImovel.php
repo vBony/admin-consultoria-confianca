@@ -7,6 +7,11 @@ use \PDO;
 class TipoImovel extends modelHelper{
     private $tabela = 'tipoImovel';
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function getAll(){
         $sql = "SELECT * FROM {$this->tabela}";
         $sql = $this->db->prepare($sql);

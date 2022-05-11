@@ -7,6 +7,11 @@ use \PDO;
 class Hierarchy extends modelHelper{
     private static $table = 'hierarchy';
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public static function buscar(){
         return (new Hierarchy())->buscarTodos();
     }
