@@ -66,7 +66,6 @@ class Admin{
         if(!empty($tokenFound)){
             $data['accessToken'] = $this->setAccessToken($userData, $tokenFound['id'], true);
         }else{
-            exit('incorreto');
             $data['accessToken'] = $this->setAccessToken($userData);
         }
 
