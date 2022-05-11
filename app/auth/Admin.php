@@ -174,11 +174,12 @@ class Admin{
                     }
                 }
             }
-
             exit;
             
             return false;
         }else{
+            echo "token nao encontrado";
+            exit;
             return false;
         }
     }
