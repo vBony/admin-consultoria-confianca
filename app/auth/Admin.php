@@ -127,7 +127,6 @@ class Admin{
 
     public function isLogged(){
         if(!isset($_SESSION['userSession'])){
-            exit('redirecionamento 1');
             $this->goToLogin();
         }else{
             $tokenSession = $_SESSION['userSession']['accessToken']['token'];
@@ -139,7 +138,6 @@ class Admin{
                     $this->goToLogin();
                 }
             }else{
-                exit('redirecionamento 3');
                 $this->goToLogin();
             }
         }
@@ -155,31 +153,21 @@ class Admin{
 
         // Token existe?
         if(!empty($tokenFind)){
-            echo "Token existe <br>";
             // O usuário é dono desse token?
             if($tokenFind['idAdmin'] == $idUser){
-                echo "Token do usuario <br>";
                 // O ip do usuário é o mesmo do token?
                 if($ip == $tokenFind['ip']){
-                    echo "mesmo ip <br>";
                     // Esse token está ativo?
                     if($tokenFind['active'] == 1){
-                        echo "ta ativo";
                         // Esse token está vencido?
                         if(strtotime($now) > strtotime($tokenFind['createdAt']) && strtotime($now) < strtotime($tokenFind['validUntil'])){
                             return true;
-                        }else{
-                            echo 'vencido';
                         }
                     }
                 }
-            }
-            exit;
-            
+            }            
             return false;
         }else{
-            echo "token nao encontrado";
-            exit;
             return false;
         }
     }
