@@ -127,6 +127,7 @@ class Admin{
 
     public function isLogged(){
         if(!isset($_SESSION['userSession'])){
+            exit('red 1');
             $this->goToLogin();
         }else{
             $tokenSession = $_SESSION['userSession']['accessToken']['token'];
@@ -134,10 +135,12 @@ class Admin{
 
             if(!empty($tokenSession) && !empty($idUser)){
                 if(!$this->validateToken($tokenSession, $idUser)){
+                    exit('red 2');
                     $this->killSession();
                     $this->goToLogin();
                 }
             }else{
+                exit('red 3');
                 $this->goToLogin();
             }
         }
