@@ -9,5 +9,7 @@ $routes['/pagina-nao-encontrada'] = '/nao-encontrado';
 $routes['/api/auth/id'] = '/auth/id';
 $routes['/api/solicitacao/tornar-avaliador'] = '/solicitacao/tornarAvaliador';
 $routes['/api/solicitacao/telefone-cliente'] = '/solicitacao/telefoneCliente';
+$routes['/api/solicitacao/email-cliente'] = '/solicitacao/emailCliente';
 $routes['/api/solicitacao/aprovar'] = '/solicitacao/aprovar';
+$routes['/api/solicitacao/reprovar'] = '/solicitacao/reprovar';
 $routes['/logout'] = '/login/logout';

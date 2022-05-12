@@ -67,13 +67,15 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="card ">
-                            <div class="card-header d-flex flex-row align-items-center flex-wrap">
-                                <h3 class="card-title">Status da Avaliação</h3>
-                                <div class="ml-lg-auto ml-md-auto ml-sm-0 d-flex align-items-center">
-                                    <span class="badge badge-warning" v-if="solicitacao.statusAdmin == 0">Aguardando</span>
-                                    <span class="badge badge-info" v-if="solicitacao.statusAdmin == 1">Em Atendimento</span>
-                                    <span class="badge badge-success" v-if="solicitacao.statusAdmin == 2">Atendido</span>
-                                    <span class="badge badge-danger" v-if="solicitacao.statusAdmin == 3">Reprovado</span>
+                            <div class="card-header">
+                                <div class="card-header-format">
+                                    <h3 class="card-title title-header">Status da Avaliação</h3>
+                                    <div class="status-header">
+                                        <span class="badge badge-warning" v-if="solicitacao.statusAdmin == 0">Aguardando</span>
+                                        <span class="badge badge-info" v-if="solicitacao.statusAdmin == 1">Em Atendimento</span>
+                                        <span class="badge badge-success" v-if="solicitacao.statusAdmin == 2">Atendido</span>
+                                        <span class="badge badge-danger" v-if="solicitacao.statusAdmin == 3">Reprovado</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -99,18 +101,34 @@
 
                             <div class="card-body" v-if="solicitacao.idAdmin > 0">
                                 <div class="alert alert-info" role="alert" v-show="idAdmin != solicitacao.idAdmin">
-                                    <h6><i class="fas fa-info-circle me-2"></i> Atenção</h6>
-                                    <p class="fs-12">
-                                        Você não possui cargo e não é avaliador dessa solicitação. Por isso, não é possivel
-                                        Aprovar/Reprovar ou entrar em contato com o cliente.
+                                    <p class="alert-status">
+                                        <i class="fas fa-info-circle icon-alert"></i>
+                                        Você não é o avaliador dessa solicitação.
                                     </p>
                                 </div>
                                 <div class="alert alert-success" role="alert" v-show="solicitacao.statusAdmin == 2">
-                                    <p class="fs-12">
-                                        <i class="fas fa-check-circle me-2"></i> Solicitação aprovada no dia {{solicitacao.adminDate}}
+                                    <p class="alert-status">
+                                        <i class="fas fa-check-circle icon-alert"></i> Aprovada dia {{solicitacao.adminDate}}
+                                    </p>
+                                </div>
+                                <div class="alert alert-danger" role="alert" v-show="solicitacao.statusAdmin == 3">
+                                    <p class="alert-status">
+                                        <i class="fas fa-check-circle icon-alert"></i> Reprovada dia {{solicitacao.adminDate}}
                                     </p>
                                 </div>
 
+                                <div class="row" v-show="solicitacao.statusAdmin == 3">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Motivo da reprovação</label>
+                                            <textarea class="form-control" rows="3" placeholder="Motivo da reprovação" readonly='true' :value="solicitacao.observacaoAdmin"></textarea>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                
+                                <hr v-show="solicitacao.statusAdmin == 3">
+                                
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
@@ -119,6 +137,7 @@
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <div class="row">
                                     <div class="col-12">
@@ -129,7 +148,7 @@
                                                 Whatsapp
                                             </button>    
 
-                                            <button type="button" class="btn btn-block btn-info btn-sm" :disabled="idAdmin != solicitacao.idAdmin || !solicitacao.formasContato.includes('Email') || solicitacao.statusAdmin != 1" data-toggle="modal" data-target="#modalEmail">
+                                            <button type="button" class="btn btn-block btn-info btn-sm" :disabled="idAdmin != solicitacao.idAdmin || !solicitacao.formasContato.includes('Email') || solicitacao.statusAdmin != 1" @click="carregarEmail()">
                                                 <i class="fas fa-envelope mr-1"></i>
                                                 E-mail
                                             </button>
@@ -151,7 +170,7 @@
 
                                             <div class="row">
                                                 <div class="col-6 text-center">
-                                                    <button type="button" class="btn btn-block btn-danger btn-sm" :disabled="idAdmin != solicitacao.idAdmin || solicitacao.statusAdmin != 1">
+                                                    <button type="button" class="btn btn-block btn-danger btn-sm" :disabled="idAdmin != solicitacao.idAdmin || solicitacao.statusAdmin != 1" data-toggle="modal" data-target="#modalReprovarSolicitacao">
                                                         <i class="fas fa-times"></i>
                                                         Reprovar
                                                     </button>
@@ -175,9 +194,13 @@
                     </div>
                     <div class="col-lg-8 col-md-8 col-sm-12">
                         <div class="card">
-                            <div class="card-header d-flex flex-row align-items-center flex-wrap">
-                                <h3 class="card-title">Solicitação n° {{solicitacao.id}}</h3>
-                                <span class="card-title text-muted createdAtTxt ml-lg-auto ml-md-auto ml-sm-0">Solicitado em {{solicitacao.createdAt}}</span>
+                            <div class="card-header">
+                                <div class="card-header-format">
+                                    <h3 class="card-title title-header">Solicitação n° {{solicitacao.id}}</h3>
+                                    <div class="status-header">
+                                        <span class="text-muted createdAtTxt">Solicitado {{solicitacao.createdAt}} atrás</span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="card-body">
@@ -297,6 +320,33 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalReprovarSolicitacao" tabindex="-1" role="dialog" aria-labelledby="reprovarSolicitacaoLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reprovarSolicitacaoLabel">Reprovar solicitação</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="required">Motivo</label>
+                                <textarea class="form-control" rows="3" placeholder="Digite o motivo" v-model="solicitacao.observacaoAdmin"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-danger btn-sm" @click="reprovarSolicitacao()">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="modalLigacao" tabindex="-1" role="dialog" aria-labelledby="ligacaoLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -334,7 +384,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-success btn-sm">Enviar</button>
                 </div>
             </div>
         </div>
@@ -349,7 +398,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="overlay" v-if="loadingTelefone == true">
+                    <div class="overlay" v-if="loadingEmail == true">
                         <div class="spinner-border text-white" role="status">
                             <span class="sr-only">Loading...</span>
                         </div>
@@ -359,28 +408,19 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">
-                                <label>Para: </label>
-                                <input type="email"  class="form-control" readonly="true" :value="solicitacao.email">
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label>Assunto: </label>
-                                <input type="text"  class="form-control" :value="'blablabla'">
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="form-group">
-                                <textarea class="form-control" rows="5" placeholder="Digite aqui a sua mensagem" :value="mensagemEmail"></textarea>
+                                <label for="exampleInputEmail1">Email</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="copiarEmail" disabled v-model="solicitacao.email" aria-label="Código de cadastro" aria-describedby="basic-addon2">
+                                    <div class="input-group-append" >
+                                        <div class="input-group-text" id="basic-addon2"><span id="copiarEmailBtn" class="btn btn-success badge" @click="copyToClipboard(solicitacao.email, '#copiarEmailBtn')">copiar</span></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-success btn-sm">Enviar</button>
                 </div>
             </div>
         </div>

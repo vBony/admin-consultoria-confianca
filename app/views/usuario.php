@@ -95,6 +95,7 @@
                                                 <div class="info-box-content">
                                                     <span class="info-box-text"> <b> Permissões </b></span>
                                                     <ul class="text-muted" v-if="idCargo == 1">
+                                                        <li>Gestão de usuários</li>
                                                         <li>Acesso a todas as estatísticas</li>
                                                         <li>Responder contatos</li>
                                                         <li>Avaliar simulações</li>
