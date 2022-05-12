@@ -103,7 +103,20 @@ class solicitacaoController extends controllerHelper{
         if(!empty($idSolicitacao) && $this->Solicitacoes->isAvaliador($idSolicitacao, $adminId)){
             $this->response(['telefone' => $this->Solicitacoes->telefone($idSolicitacao)]);
         }else{
-            $this->response(['error' => 'Não foi possível realizar essa solicitação, tente novamente mais tarde']);
+            $this->response(['error' => 'Você não é o avaliador dessa solicitação']);
+        }
+    }
+
+    public function emailCliente(){
+        $this->Auth->isLogged();
+        $adminId = $this->Auth->getIdUserLogged();
+
+        $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
+
+        if(!empty($idSolicitacao) && $this->Solicitacoes->isAvaliador($idSolicitacao, $adminId)){
+            $this->response(['email' => $this->Solicitacoes->email($idSolicitacao)]);
+        }else{
+            $this->response(['error' => 'Você não é o avaliador dessa solicitação']);
         }
     }
 
@@ -128,7 +141,33 @@ class solicitacaoController extends controllerHelper{
                 $this->response([
                     'success' => true,
                     'status' => StatusAvaliacao::atendido(),
-                    'date' => $this->Sanitazer->dataEHora($solicitacao['adminDate']),
+                    'date' => $this->Sanitazer->dataEHora($solicitacao['adminDate'], true),
+                ]);
+            }else{
+                $this->response(['fail' => true]);
+            }
+        }
+    }
+
+    public function reprovar(){
+        $this->Auth->isLogged();
+        $adminId = $this->Auth->getIdUserLogged();
+
+        $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
+        $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao);
+        $motivo = $this->safeData($_POST, 'motivo');
+
+        if($adminId != $solicitacao['idAdmin']){
+            $this->response(['error' => 'Você não é o responsável por essa solicitação.']);
+        }else{
+            if($this->Solicitacoes->reprovar($idSolicitacao, $motivo)){
+                $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao);
+
+                $this->response([
+                    'success' => true,
+                    'status' => StatusAvaliacao::reprovado(),
+                    'date' => $this->Sanitazer->dataEHora($solicitacao['adminDate'], true),
+                    'motivo' => $solicitacao['observacaoAdmin']
                 ]);
             }else{
                 $this->response(['fail' => true]);

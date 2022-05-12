@@ -65,7 +65,7 @@ class Solicitacoes extends modelHelper{
         $solicitacao = $this->buscarPorId($id);
 
         if($idAdmin != $solicitacao['idAdmin']){
-            return $this->montarNaoAvaliador($solicitacao);
+            return Sanitazer::naoAvaliador($solicitacao);
         }else{
             return Sanitazer::semDadosContato($solicitacao);
         }
@@ -124,6 +124,33 @@ class Solicitacoes extends modelHelper{
         }
     }
 
+    public function reprovar($idSolicitacao, $motivo){
+        $sql  = "UPDATE {$this->tabela} ";
+        $sql .= "SET statusAdmin = :statusAdmin, adminDate = :adminDate, observacaoAdmin = :observacaoAdmin ";
+        $sql .= "WHERE id=:id ";
+
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':statusAdmin', StatusAvaliacao::reprovado());
+        $sql->bindValue(':adminDate', $this->createdAt());
+        $sql->bindValue(':observacaoAdmin', $motivo);
+        $sql->bindValue(':id', $idSolicitacao);
+
+        try {
+            $this->db->beginTransaction();
+
+            $sql->execute();
+            $this->db->commit();
+
+            return true;
+        } catch(PDOException $e) {
+            $this->db->rollback();
+            exit($e->getMessage());
+            // TODO: SALVAR ERRO NUMA TABELA DE LOG
+
+            return false;
+        }
+    }
+
     public function podeTornarAvaliador($id, $idAdmin){
         $solicitacao = $this->buscarPorId($id);
 
@@ -159,6 +186,11 @@ class Solicitacoes extends modelHelper{
 
         return $solicitacao['telefone'];
     }
+    public function email($id){
+        $solicitacao = $this->buscarPorId($id);
+
+        return $solicitacao['email'];
+    }
 
     public function montarRegistro($registro){
         $backupAdminDate = $registro['adminDate'];
@@ -168,10 +200,6 @@ class Solicitacoes extends modelHelper{
         $registro['admin'] = $this->Admin->buscarPorId($registro['idAdmin']);
         $registro['adminDate'] = $this->sanitazerHelper->dataEHora($registro['adminDate'], true);
         return $registro;
-    }
-
-    public function montarNaoAvaliador($registro){
-        return Sanitazer::naoAvaliador($registro);
     }
 
 }

@@ -5,12 +5,14 @@ Vue.createApp({
             loading: false,
             loadingStatusAvaliacao: 0,
             loadingTelefone: false,
+            loadingEmail: false,
             solicitacao: [],
             baseUrl: $('#baseUrl').val(),
             isAvaliador: false,
             listas: [],
             mensagemWhatsapp: '',
-            mensagemEmail: ''
+            mensagemEmail: '',
+            observacaoAdmin: ''
         }
     },
 
@@ -149,7 +151,7 @@ Vue.createApp({
             data.append('idSolicitacao', idSolicitacao)
 
             Swal.fire({
-                title: 'Confirma aprovação',
+                title: 'Confirmar aprovação',
                 text: "Confirma a aprovação dessa solicitação?",
                 showCancelButton: true,
                 confirmButtonText: 'Sim',
@@ -157,7 +159,11 @@ Vue.createApp({
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire('Aguarde um momento...', '', '')
+                    Swal.fire({
+                        title: 'Aguarde...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
                     Swal.showLoading()
 
                     $.ajax({
@@ -179,10 +185,103 @@ Vue.createApp({
                     });
                 }
             })
+        },
+
+        reprovarSolicitacao(){
+            var data = new FormData();
+            data.append('idSolicitacao', this.solicitacao['id'])
+            data.append('motivo', this.solicitacao['observacaoAdmin'])
+
+            Swal.fire({
+                title: 'Confirmar reprovação',
+                text: "Confirma a reprovação dessa solicitação?",
+                showCancelButton: true,
+                confirmButtonText: 'Sim',
+                cancelButtonText: 'Não',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Aguarde...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                    Swal.showLoading()
+
+                    $.ajax({
+                        url: this.baseUrl+'api/solicitacao/reprovar',
+                        data: {
+                            idSolicitacao: this.solicitacao['id'],
+                            motivo: this.solicitacao['observacaoAdmin']
+                        },
+                        type: "POST",
+                        dataType: 'json',                
+                        success: (data) => {
+                            if(data.success){
+                                this.solicitacao['statusAdmin'] = data.status
+                                this.solicitacao['adminDate'] = data.date
+                                this.solicitacao['observacaoAdmin'] = data.motivo
+                                Swal.fire('Sucesso', 'Solicitação reprovada com sucesso', 'success')
+                                $('#modalReprovarSolicitacao').modal('hide')
+                            }else if(data.error){
+                                Swal.fire('Erro', data.error, 'error')
+                            }else{
+                                Swal.fire('Erro', "Houve um erro na requisição, tente novamente mais tarde", 'error')  
+                            }
+                        }
+                    });
+                }
+            })
+        },
+
+        copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text);
+
+            let button = $(element)
+            if(button.length){
+                let originalText = $(element).val()
+                
+                button.text('copiado!')
+                setTimeout(() => {
+                    button.text(originalText)
+                }, 2000);
+            }else{
+                console.log('element not found');
+            }
+        },
+
+        carregarEmail(){
+            $('#modalEmail').modal('show')
+            this.loadingEmail = true
+
+            let idSolicitacao = this.solicitacao['id']
+
+            var data = new FormData();
+            data.append('idSolicitacao', idSolicitacao)
+
+            $.ajax({
+                url: this.baseUrl+'api/solicitacao/email-cliente',
+                data: {idSolicitacao: idSolicitacao},
+                type: "POST",
+                dataType: 'json',                
+                success: (data) => {
+                    if(data.email){
+                        this.solicitacao['email'] = data.email
+                    }else{
+                        if(data.error){
+                            $('#modalEmail').modal('hide')
+                            alert(data.error)
+                        }else{
+                            alert("Houve um erro na requisição.")
+                        }
+                    }
+                },
+                complete: () => {
+                    this.loadingEmail = false
+                }
+            });
         }
     },
-
-
     mounted(){
         
 
