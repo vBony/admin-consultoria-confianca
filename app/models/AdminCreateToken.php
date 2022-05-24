@@ -117,6 +117,15 @@ class AdminCreateToken extends modelHelper{
 
     }
 
+    public function setDono($idAdmin, $idToken){
+        $sql = "UPDATE {$this->table} SET idAdmin=:idAdmin WHERE id=:idToken";
+
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":idAdmin", $idAdmin);
+        $sql->bindValue(":idToken", $idToken);
+        $sql->execute();
+    }
+
     public function gerarToken(){
         return substr(md5(time() . rand(1, 999999) . time()), 0, $this->tamanhoToken);
     }
