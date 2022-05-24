@@ -22,6 +22,8 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://unpkg.com/vue@3"></script>
+    <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="<?=$baseUrl?>app/dist/js/adminlte.js"></script>
     <script src="<?=$baseUrl?>app/assets/js/template.js"></script>
 </head>
@@ -255,7 +257,7 @@
                                 </div>
 
                                 <div class="col-12" id="danger-area">
-                                    <button class="btn btn-sm btn-danger" :disabled="usuario.resetPassword == 0">Resetar senha</button>
+                                    <button class="btn btn-sm btn-danger" @click="initResetPassword()">Resetar senha</button>
                                     <button class="btn btn-sm btn-danger">Banir</button>
                                 </div>
                             </div>

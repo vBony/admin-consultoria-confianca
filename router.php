@@ -15,3 +15,5 @@ $routes['/api/solicitacao/reprovar'] = '/solicitacao/reprovar';
 $routes['/logout'] = '/login/logout';
 $routes['/api/usuario/buscar-cargos'] = '/usuario/buscarCargos';
 $routes['/api/usuario/buscar'] = '/usuario/buscar';
+$routes['/esqueci-a-senha'] = '/esqueciSenha';
+$routes['/api/usuario/reset-senha'] = '/usuario/resetSenha';

@@ -97,6 +97,13 @@ class Admin extends modelHelper{
         }
     }
 
+    public function resetSenha($idUsuario){
+        $sql = "UPDATE {$this->table} SET resetPassword=1 WHERE id= :id";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':id', $idUsuario);
+        $sql->execute();
+    }
+
     /**
      * Ajusta dados necessários para mostrar na tela
      */

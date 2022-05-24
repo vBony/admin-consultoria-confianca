@@ -87,6 +87,52 @@ class usuarioController extends controllerHelper{
         }
     }
 
+    public function resetSenha(){
+        $auth = new AuthAdmin();
+        $auth->isLogged();
+
+        $token = new AdminCreateToken();
+
+        $adminId = $auth->getIdUserLogged();
+        $loggedUser = $this->Admin->buscarPorId($adminId);
+
+        if($loggedUser['hierarchy']['level'] > 1){
+            $this->response(['error' => 'hierarchy']);
+        }else{
+
+            $idUsuario = $this->safeData($_POST, 'idUsuario');
+
+            if(!empty($idUsuario)){
+                $tokenFound = $token->buscarTokenSenhaPorAdmin($idUsuario);
+
+                if(empty($tokenFound)){
+                    $usuario = $this->Admin->buscarPorId($idUsuario);
+                    $tokens = $token->salvar($usuario['idHierarchy'], $idUsuario, true);
+                    $this->Admin->resetSenha($idUsuario);
+    
+                    if(!is_bool($tokens)){
+                        $this->response([
+                            'success'=>true,
+                            'token' => $tokens['codigo']
+                        ]);
+                    }else{
+                        $this->response(['error' => 'critical']);
+                    }
+                }else{
+                    $this->response([
+                        'success'=>true,
+                        'token' => $tokenFound
+                    ]);
+                }
+            }else{
+                $this->response(['error' => 'critical']);
+            }
+            
+        }
+
+
+    }
+
     public function codigosDisponiveis(){
         $auth = new AuthAdmin();
         $auth->isLogged();

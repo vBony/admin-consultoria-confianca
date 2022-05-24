@@ -56,7 +56,7 @@
             </form>
 
             <p class="mb-1 mt-2">
-                <a href="#">Esqueci minha senha</a>
+                <a href="<?=$baseUrl?>esqueci-a-senha">Esqueci minha senha</a>
             </p>
             <p class="mb-0">
                 <a href="<?=$baseUrl?>cadastro" class="text-center">Registrar um novo membro</a>
