@@ -5,7 +5,11 @@ Vue.createApp({
             codigos:[],
             loading: false,
             messages:[],
-            codigo: ''
+            codigo: '',
+            cargos: [],
+            usuario: [],
+            usuarios: [],
+            loadingUsuario: true
         }
     },
 
@@ -84,10 +88,46 @@ Vue.createApp({
             }else{
                 console.log('element not found');
             }
+        },
+
+        buscarCargos(){
+            let baseUrl = $('#baseUrl').val()
+
+            axios.post(baseUrl+'api/usuario/buscar-cargos')
+            .then((response) => {
+                this.cargos = response.data.listas.cargos
+            })
+        },
+
+        buscarUsuarios(){
+            let baseUrl = $('#baseUrl').val()
+            axios.post(baseUrl+'api/usuario/buscar')
+            .then((response) => {
+                this.usuarios = response.data.listas.usuarios
+            })
+        },
+        
+        dadosUsuarioSelecionado(id){
+            this.usuario = []
+            this.loadingUsuario = true
+
+
+            let data = new FormData()
+            data.append('id', id);
+
+            let baseUrl = $('#baseUrl').val()
+            axios.post(baseUrl+'api/usuario/buscar', data)
+            .then((response) => {
+                this.usuario = response.data.usuario
+            }).finally(() => {
+                this.loadingUsuario =  false
+            });
         }
     },
 
     mounted(){
-        this.buscarCodigos()
+        this.buscarCodigos(),
+        this.buscarCargos(),
+        this.buscarUsuarios()
     }
 }).mount('#app')

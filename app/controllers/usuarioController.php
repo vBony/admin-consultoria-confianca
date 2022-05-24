@@ -23,7 +23,6 @@ class usuarioController extends controllerHelper{
         $data = array();
         $data['baseUrl'] = $baseUrl;
         $data['user'] = $user;
-        $data['listas']['cargos'] = Hierarchy::buscar();
 
         $data['templateData']['user'] = $user;
         $data['templateData']['baseUrl'] = $baseUrl;
@@ -32,12 +31,37 @@ class usuarioController extends controllerHelper{
         $this->loadView('usuario', $data);
     }
 
+    public function buscarCargos(){
+        $auth = new AuthAdmin();
+        $auth->isLogged();
+
+        $data['listas']['cargos'] = Hierarchy::buscar();
+
+        $this->response($data);
+    }
+
+    public function buscar(){
+        $admin = new Admin();
+        $auth = new AuthAdmin();
+        $auth->isLogged();
+
+        $id = $this->safeData($_POST, 'id');
+
+        if(!empty($id)){
+            $data['usuario'] = $admin->buscarPorId($id, true);
+        }else{
+            $adminId = $auth->getIdUserLogged();
+            $data['listas']['usuarios'] = $admin->buscar($adminId);
+        }
+
+        $this->response($data);
+    }
+
     public function criarCodigo(){
         $auth = new AuthAdmin();
         $auth->isLogged();
         $erros = array();
 
-        $adminId = $auth->getIdUserLogged();
         $idCargo = !empty($_POST['idCargo']) ? $_POST['idCargo'] : null;
 
         if(empty($idCargo)){

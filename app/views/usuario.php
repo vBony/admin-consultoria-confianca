@@ -57,7 +57,7 @@
 
         <section class="content">
             <div class="container-fluid">
-                <div class="row">
+                <div class="row" >
                     <div class="col-12">
                         <div class="card card-secondary">
                             <div class="card-header">
@@ -74,9 +74,7 @@
                                                         <label>Cargo</label>
                                                         <select class="form-control" v-model="idCargo" v-bind:class="{ 'is-invalid': messages.cargo }" @change="messages.cargo = ''">
                                                             <option value="0">Selecione</option>
-                                                            <?php foreach($listas['cargos'] as $cargos): ?>
-                                                                <option value="<?=$cargos['id']?>"><?=$cargos['name']?></option>
-                                                            <?php endforeach; ?>
+                                                            <option v-for="cargo in cargos" :key="cargo.id" :value="cargo.id">{{cargo.name}}</option>
                                                         </select>
                                                         <div class="invalid-feedback">{{messages.cargo}}</div>
                                                     </div>
@@ -159,8 +157,117 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                <h3 class="card-title">Usuários</h3>
+
+                                <div class="card-tools">
+                                    <div class="input-group input-group-sm" style="width: 150px;">
+                                        <input type="text" name="table_search" class="form-control float-right" placeholder="Procurar">
+
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-default">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body row">
+                            <div class="card-body table-responsive p-0" style="height: 300px;">
+                                <table class="table table-head-fixed text-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th class="status-column column">#</th>
+                                            <th class="photo-column column"></th>
+                                            <th class="name-column column">Nome</th>
+                                            <th class="cargo-column column">Cargo</th>
+                                            <th class="button-column column"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="usuarioLista in usuarios" :key="usuarioLista.id" :value="usuarioLista.id">
+                                            <td class="status-column column">{{usuarioLista.id}}</td>
+                                            <td class="photo-column column"><img :src="usuarioLista.urlAvatar" alt=""></td>
+                                            <td class="name-column column">{{usuarioLista.name}} {{usuarioLista.lastName}}</td>
+                                            <td class="cargo-column column">{{usuarioLista.hierarchy.name}}</td>
+                                            <td class="button-column column">
+                                                <a class="btn btn-primary btn-sm" @click="dadosUsuarioSelecionado(usuarioLista.id)" data-toggle="modal" data-target="#modalUsuario">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
+
+        <div class="modal fade" id="modalUsuario" tabindex="-1" role="dialog" aria-labelledby="usuarioLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="usuarioLabel">Dados do usuário</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="overlay" v-if="loadingUsuario == true">
+                            <div class="spinner-border text-white" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+
+                            <div class="text-white fs-4">Carregando...</div>
+                        </div>
+                        <div class="row" v-else>
+                            <div id="user-img" class="col-12 text-center">
+                                <img :src="usuario.urlAvatar" alt="">
+                            </div>
+
+                            <div class="col-12" id="user-data-area">
+                                <div class="form-group">
+                                    <label>Nome completo</label>
+                                    <input type="text" class="form-control" placeholder="Nome" :value="usuario.name +' '+ usuario.lastName" readonly="true">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>E-mail</label>
+                                    <input type="text" class="form-control" placeholder="E-mail" :value="usuario.email" readonly="true">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Cargo</label>
+                                    <input type="text" class="form-control" placeholder="Cargo" :value="usuario.hierarchy.name" readonly="true">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Data de criação</label>
+                                    <input type="text" class="form-control" placeholder="Cargo" :value="usuario.createdAtFormatted" readonly="true">
+                                </div>
+
+                                <div class="col-12" id="danger-area">
+                                    <button class="btn btn-sm btn-danger" :disabled="usuario.resetPassword == 0">Resetar senha</button>
+                                    <button class="btn btn-sm btn-danger">Banir</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <input type="hidden" id="baseUrl" value="<?=$baseUrl?>">
