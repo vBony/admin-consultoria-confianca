@@ -5,7 +5,12 @@ Vue.createApp({
             codigos:[],
             loading: false,
             messages:[],
-            codigo: ''
+            codigo: '',
+            cargos: [],
+            usuario: [],
+            usuarios: [],
+            loadingUsuario: true,
+            tokenResetPassword: ''
         }
     },
 
@@ -84,10 +89,104 @@ Vue.createApp({
             }else{
                 console.log('element not found');
             }
+        },
+
+        buscarCargos(){
+            let baseUrl = $('#baseUrl').val()
+
+            axios.post(baseUrl+'api/usuario/buscar-cargos')
+            .then((response) => {
+                this.cargos = response.data.listas.cargos
+            })
+        },
+
+        buscarUsuarios(){
+            let baseUrl = $('#baseUrl').val()
+            axios.post(baseUrl+'api/usuario/buscar')
+            .then((response) => {
+                this.usuarios = response.data.listas.usuarios
+            })
+        },
+        
+        dadosUsuarioSelecionado(id){
+            this.usuario = []
+            this.loadingUsuario = true
+
+
+            let data = new FormData()
+            data.append('id', id);
+
+            let baseUrl = $('#baseUrl').val()
+            axios.post(baseUrl+'api/usuario/buscar', data)
+            .then((response) => {
+                this.usuario = response.data.usuario
+            }).finally(() => {
+                this.loadingUsuario =  false
+            });
+        },
+
+        initResetPassword(){
+            let baseUrl = $('#baseUrl').val()
+            this.tokenResetPassword = ''
+
+            Swal.fire({
+                icon: 'question',
+                title: 'Confirmar reset de senha',
+                text: `Confirma o reset de senha do usuário ${this.usuario.name}?`,
+                showCancelButton: true,
+                confirmButtonText: 'Sim',
+                cancelButtonText: 'Não',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Aguarde...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                    Swal.showLoading()
+
+                    let data = new FormData()
+                    data.append('idUsuario', this.usuario['id']);
+
+                    axios.post(baseUrl+'api/usuario/reset-senha', data)
+                    .then((response) => {
+                        if(response.data.success){
+                            this.tokenResetPassword = response.data.token
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Token para alteração de senha',
+                                text: `Envie o token abaixo para o administrador ${this.usuario.name} executar a alteração de senha.`,
+                                html: `<br>Token: <b>${this.tokenResetPassword}</b>`,
+                                showCancelButton: true,
+                                showConfirmButton: true,
+                                cancelButtonText: 'Fechar',
+                                confirmButtonText: 'Copiar token e fechar',
+                                reverseButtons: true,
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    navigator.clipboard.writeText(this.tokenResetPassword);
+                                }
+                            })
+                            
+                        }else if(response.data.error){
+                            if(response.data.error == 'hierarchy'){
+                                Swal.fire('Erro', 'Ação não permitida para o cargo', 'error')
+                            }else{
+                                Swal.fire('Erro', 'Houve um problema na requisição. Tente novamente mais tarde ou entre em contato com o desenvolvedor.', 'error')
+                            }
+                        }
+                    })
+                }
+            })
         }
     },
 
     mounted(){
-        this.buscarCodigos()
+        this.buscarCodigos(),
+        this.buscarCargos(),
+        this.buscarUsuarios()
     }
 }).mount('#app')

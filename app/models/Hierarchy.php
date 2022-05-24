@@ -12,8 +12,12 @@ class Hierarchy extends modelHelper{
         parent::__construct();
     }
 
-    public static function buscar(){
-        return (new Hierarchy())->buscarTodos();
+    public static function buscar($id = null){
+        if($id === null){
+            return (new Hierarchy())->buscarTodos();
+        }else{
+            return (new Hierarchy())->buscarPorId($id);
+        }
     }
 
     public function buscarTodos(){
@@ -24,5 +28,16 @@ class Hierarchy extends modelHelper{
         $sql->execute();
 
         return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function buscarPorId($id){
+        $tabela = self::$table;
+
+        $sql = "SELECT * FROM $tabela WHERE id = :id";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':id', $id);
+        $sql->execute();
+
+        return $sql->fetch(PDO::FETCH_ASSOC);
     }
 }

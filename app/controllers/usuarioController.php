@@ -23,7 +23,6 @@ class usuarioController extends controllerHelper{
         $data = array();
         $data['baseUrl'] = $baseUrl;
         $data['user'] = $user;
-        $data['listas']['cargos'] = Hierarchy::buscar();
 
         $data['templateData']['user'] = $user;
         $data['templateData']['baseUrl'] = $baseUrl;
@@ -32,12 +31,37 @@ class usuarioController extends controllerHelper{
         $this->loadView('usuario', $data);
     }
 
+    public function buscarCargos(){
+        $auth = new AuthAdmin();
+        $auth->isLogged();
+
+        $data['listas']['cargos'] = Hierarchy::buscar();
+
+        $this->response($data);
+    }
+
+    public function buscar(){
+        $admin = new Admin();
+        $auth = new AuthAdmin();
+        $auth->isLogged();
+
+        $id = $this->safeData($_POST, 'id');
+
+        if(!empty($id)){
+            $data['usuario'] = $admin->buscarPorId($id, true);
+        }else{
+            $adminId = $auth->getIdUserLogged();
+            $data['listas']['usuarios'] = $admin->buscar($adminId);
+        }
+
+        $this->response($data);
+    }
+
     public function criarCodigo(){
         $auth = new AuthAdmin();
         $auth->isLogged();
         $erros = array();
 
-        $adminId = $auth->getIdUserLogged();
         $idCargo = !empty($_POST['idCargo']) ? $_POST['idCargo'] : null;
 
         if(empty($idCargo)){
@@ -61,6 +85,52 @@ class usuarioController extends controllerHelper{
         if(!empty($erros)){
             $this->response(['erros' => $erros]);
         }
+    }
+
+    public function resetSenha(){
+        $auth = new AuthAdmin();
+        $auth->isLogged();
+
+        $token = new AdminCreateToken();
+
+        $adminId = $auth->getIdUserLogged();
+        $loggedUser = $this->Admin->buscarPorId($adminId);
+
+        if($loggedUser['hierarchy']['level'] > 1){
+            $this->response(['error' => 'hierarchy']);
+        }else{
+
+            $idUsuario = $this->safeData($_POST, 'idUsuario');
+
+            if(!empty($idUsuario)){
+                $tokenFound = $token->buscarTokenSenhaPorAdmin($idUsuario);
+
+                if(empty($tokenFound)){
+                    $usuario = $this->Admin->buscarPorId($idUsuario);
+                    $tokens = $token->salvar($usuario['idHierarchy'], $idUsuario, true);
+                    $this->Admin->resetSenha($idUsuario);
+    
+                    if(!is_bool($tokens)){
+                        $this->response([
+                            'success'=>true,
+                            'token' => $tokens['codigo']
+                        ]);
+                    }else{
+                        $this->response(['error' => 'critical']);
+                    }
+                }else{
+                    $this->response([
+                        'success'=>true,
+                        'token' => $tokenFound
+                    ]);
+                }
+            }else{
+                $this->response(['error' => 'critical']);
+            }
+            
+        }
+
+
     }
 
     public function codigosDisponiveis(){

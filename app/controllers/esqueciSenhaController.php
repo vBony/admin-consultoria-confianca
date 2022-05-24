@@ -5,15 +5,15 @@ use auth\Admin as AdminAuth;
 use core\controllerHelper;
 use models\AdminCreateToken;
 
-class cadastroController extends controllerHelper{
+class esqueciSenhaController extends controllerHelper{
     public function index(){
         $data = array();
         $data['baseUrl'] = $this->baseUrl();
 
-        $this->loadView('cadastro', $data);
+        $this->loadView('esqueci-senha', $data);
     }
 
-    public function cadastrar(){
+    public function resetarSenha(){
         $this->loadValidator('Admin');
         $adminValidator = new AdminValidator('create');
         $adminValidator->validate($_POST);

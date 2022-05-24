@@ -44,18 +44,26 @@ class AdminCreateToken extends modelHelper{
         }
     }
 
-    public function salvar($idCargo){
+    public function salvar($idCargo, $idAdmin = null, $resetSenha = false){
         $token = $this->gerarToken();
         $validUntil = date('Y-m-d H:i:s',strtotime($this->validadeToken, strtotime($this->createdAt())));
 
-        $sql  = "INSERT INTO {$this->table} (token, idHierarchy, createdAt, validUntil, idAdmin) ";
-        $sql .= "VALUES(:token, :idHierarchy, :createdAt, :validUntil, NULL)";
+        $sql  = "INSERT INTO {$this->table} (token, idHierarchy, createdAt, validUntil, idAdmin, resetPassword) ";
+
+        if($idAdmin !== null && $resetSenha !== false){
+            $sql .= "VALUES(:token, :idHierarchy, :createdAt, :validUntil, :idAdmin, 1)";
+        }else{
+            $sql .= "VALUES(:token, :idHierarchy, :createdAt, :validUntil, NULL)";
+        }
 
         $sql = $this->db->prepare($sql);
         $sql->bindValue(":token", $token);
         $sql->bindValue(":idHierarchy", $idCargo);
         $sql->bindValue(":createdAt", $this->createdAt());
         $sql->bindValue(":validUntil", $validUntil);
+        if($idAdmin !== null && $resetSenha !== false){
+            $sql->bindValue(":idAdmin", $idAdmin);
+        }
 
         try {
             $this->db->beginTransaction();
@@ -80,15 +88,28 @@ class AdminCreateToken extends modelHelper{
         }
     }
 
+    public function buscarTokenSenhaPorAdmin($idAdmin){
+        $sql = "SELECT * FROM {$this->table} WHERE idAdmin = :idAdmin AND resetPassword = true order by id desc limit 1";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":idAdmin", $idAdmin);
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            $data = $sql->fetch(PDO::FETCH_ASSOC);
+
+            return $data['token'];
+        }
+    }
+
     public function getDisponiveis($count = false){
         $now = $this->createdAt();
 
         if($count){
-            $sql = "SELECT count(*) as quantidade FROM {$this->table} WHERE validUntil > :data && idAdmin is null";
+            $sql = "SELECT count(*) as quantidade FROM {$this->table} WHERE validUntil > :data AND idAdmin is null";
         }else{
             $sql  = "SELECT act.*, h.name as nomeHierarchy FROM {$this->table} act ";
             $sql .= "INNER JOIN hierarchy h on h.id = act.idHierarchy ";
-            $sql .= "WHERE validUntil > :data && idAdmin is null ";
+            $sql .= "WHERE validUntil > :data AND idAdmin is null ";
         }
 
         $sql = $this->db->prepare($sql);
@@ -115,6 +136,15 @@ class AdminCreateToken extends modelHelper{
             return false;
         }
 
+    }
+
+    public function setDono($idAdmin, $idToken){
+        $sql = "UPDATE {$this->table} SET idAdmin=:idAdmin WHERE id=:idToken";
+
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":idAdmin", $idAdmin);
+        $sql->bindValue(":idToken", $idToken);
+        $sql->execute();
     }
 
     public function gerarToken(){

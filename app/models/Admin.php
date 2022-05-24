@@ -4,6 +4,8 @@ use core\modelHelper;
 use \PDO;
 use \PDOException;
 use core\controllerHelper;
+use auth\Admin as AuthAdmin;
+use sanitazerHelper;
 
 class Admin extends modelHelper{
     private $table = 'admin';
@@ -78,17 +80,46 @@ class Admin extends modelHelper{
         return $data;
     }
 
+    public function buscar($idExcecao){
+        $data = array();
+
+        $sql = "SELECT * FROM {$this->table} WHERE id != :id";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':id', $idExcecao);
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            foreach($sql->fetchAll(PDO::FETCH_ASSOC) as $user){
+                $data[] = $this->mountData( $this->getSafeData($user));
+            }
+
+            return $data;
+        }
+    }
+
+    public function resetSenha($idUsuario){
+        $sql = "UPDATE {$this->table} SET resetPassword=1 WHERE id= :id";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':id', $idUsuario);
+        $sql->execute();
+    }
 
     /**
      * Ajusta dados necessários para mostrar na tela
      */
     public function mountData($data){
+        $auth = new AuthAdmin();
+        $sanitazer = new sanitazerHelper();
+
         if($data['urlAvatar'] == 'none'){
             $data['urlAvatar'] = \core\controllerHelper::getBaseUrl() . 'app/assets/imgs/avatar/default.png';
         }else{
             $fileName =  $data['urlAvatar'];
             $data['urlAvatar'] = \core\controllerHelper::getBaseUrl() . 'app/assets/imgs/avatar/' . $fileName;
         }
+
+        $data['hierarchy'] = Hierarchy::buscar($data['idHierarchy']);
+        $data['createdAtFormatted'] =  $sanitazer->dataEHora($data['createdAt'], true);
 
         return $data;
     }
