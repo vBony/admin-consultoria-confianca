@@ -14,23 +14,29 @@ class esqueciSenhaController extends controllerHelper{
     }
 
     public function resetarSenha(){
-        $this->loadValidator('Admin');
-        $adminValidator = new AdminValidator('create');
-        $adminValidator->validate($_POST);
+        $adminValidator = new AdminValidator();
+
+
         $adminAuth = new AdminAuth();
         $token = new AdminCreateToken();
-
         $adminModel = new Admin();
+        
+        
+        $adminValidator->validateResetPassword($_POST);
 
         if(!empty($adminValidator->getMessages())){
             $this->response(['error' => $adminValidator->getMessages()]);
         }else{
-            $id = $adminModel->cadastrar($_POST);
-            if(!is_bool($id)){
-                $token->setDono($id, $_POST['token']);    
-                $adminAuth->loginAfterRegister($id);
+            $admin = $adminModel->buscarPorEmail($_POST['email']);
+
+            $sucesso = $adminModel->alterarSenha($admin['id'], $_POST);
+            if($sucesso){
+                $token->delete($_POST['token']);    
+                $adminAuth->loginAfterRegister($admin['id']);
+
                 $this->response(['success' => 1]);
             }else{
+                exit('final');
                 $this->response(['success' => 0]);
             }
         }

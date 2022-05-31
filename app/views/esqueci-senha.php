@@ -104,6 +104,6 @@
 <script src="<?=$baseUrl?>app/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="<?=$baseUrl?>app/dist/js/adminlte.min.js"></script>
-<script src="<?=$baseUrl?>app/assets/js/cadastro.js"></script>
+<script src="<?=$baseUrl?>app/assets/js/esqueci-senha.js"></script>
 </body>
 </html>

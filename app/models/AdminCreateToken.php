@@ -44,6 +44,44 @@ class AdminCreateToken extends modelHelper{
         }
     }
 
+    public function validateResetPassword($token, $idUser){
+        $sql = "SELECT * FROM {$this->table} WHERE token = :token AND idAdmin = :idAdmin AND resetPassword = 1";
+
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":token", $token);
+        $sql->bindValue(":idAdmin", $idUser);
+        $sql->execute();
+
+        if($sql->rowCount() > 0 ){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function delete($token){
+        $sql = "DELETE FROM {$this->table} WHERE token=:token";
+
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":token", $token);
+
+        try {
+            $this->db->beginTransaction();
+
+            $sql->execute();
+            $this->db->commit();
+
+            return true;
+        } catch(PDOException $e) {
+            $this->db->rollback();
+
+            exit($e->getMessage());
+            // TODO: SALVAR ERRO NUMA TABELA DE LOG
+
+            return false;
+        }
+    }
+
     public function salvar($idCargo, $idAdmin = null, $resetSenha = false){
         $token = $this->gerarToken();
         $validUntil = date('Y-m-d H:i:s',strtotime($this->validadeToken, strtotime($this->createdAt())));

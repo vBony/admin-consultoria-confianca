@@ -17,3 +17,4 @@ $routes['/api/usuario/buscar-cargos'] = '/usuario/buscarCargos';
 $routes['/api/usuario/buscar'] = '/usuario/buscar';
 $routes['/esqueci-a-senha'] = '/esqueciSenha';
 $routes['/api/usuario/reset-senha'] = '/usuario/resetSenha';
+$routes['/api/esqueci-senha/reset-senha'] = '/esqueciSenha/resetarSenha';
