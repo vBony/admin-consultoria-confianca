@@ -1,28 +1,76 @@
-$(document).ready(function(){
-    const baseUrl = $('#burl').val()
-    $('.loading').fadeOut('fast')
+Vue.createApp({
+    data() {
+        return {
+            loading: false,
+            baseUrl: $('#burl').val(),
+            acessos: [],
+            idAdmin: 0
+        }
+    },
 
-    $('#logout-btn').on('click', function(){
-        loading()
-        $.ajax({
-            url: baseUrl+'login/logout',
-            type: "POST",
-            dataType: 'json',                
-            success: function(data){
-                if(data.success){
-                    if(data.success == 1){
-                        window.location.href = baseUrl 
-                    }else{
-                        alert('Houve um problema na requisição, tente novamente mais tarde ou entre em contato com o desenvolvedor.')
+    methods: {
+        logout(){
+            this.loading = true
+
+            $.ajax({
+                url: this.baseUrl+'login/logout',
+                type: "POST",
+                dataType: 'json',                
+                success: function(data){
+                    if(data.success){
+                        if(data.success == 1){
+                            window.location.href = baseUrl 
+                        }else{
+                            alert('Houve um problema na requisição, tente novamente mais tarde ou entre em contato com o desenvolvedor.')
+                        }
                     }
+                },
+                complete: function(){
+                    this.loading = false
                 }
-            },
-            complete: function(){
-                loadingComplete()
-            }
-        });
-    })
-})
+            });
+        },
+
+        buscarIdAdmin(){
+            this.loading = true
+
+            $.ajax({
+                url: this.baseUrl+'api/auth/id',
+                type: "POST",
+                dataType: 'json',                
+                success: (data) => {
+                    this.idAdmin = data.id
+                },
+                complete: () => {
+                    this.loading = false
+                }
+            });
+        },
+
+        buscarDadosIniciais(){
+            $.ajax({
+                url: this.baseUrl+'api/dashboard/buscar-dados',
+                type: "POST",
+                dataType: 'json',                
+                success: (data) => {
+                    this.acessos = data.acessos
+                },
+                complete: () => {
+                    this.loading = false
+                }
+            });
+        }
+    },
+
+    mounted(){
+
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+
+        this.buscarDadosIniciais()
+    }
+}).mount('#app')
 
 function loading(){
     $('.loading').fadeIn('fast')

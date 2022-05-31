@@ -2,6 +2,8 @@
 use auth\Admin as AuthAdmin;
 use models\Admin;
 use core\controllerHelper;
+use models\Acessos;
+
 class homeController extends controllerHelper{
     private $Admin;
 
@@ -28,11 +30,18 @@ class homeController extends controllerHelper{
         $this->loadView('home', $data);
     }
 
-    // public function home(){
-    //     $data = array();
+    public function buscarDados(){
+        $auth = new AuthAdmin();
+        $auth->isLogged();
 
-    //     $this->loadView('home', $data);
-    // }
+        $acessos = new Acessos();
+        
+        $data['acessos'] = [
+            'total' => $acessos->total(true)
+        ];
+
+        $this->response($data);
+    }
 }
 
 ?>

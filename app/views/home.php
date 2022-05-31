@@ -27,18 +27,22 @@
   <link rel="stylesheet" href="<?=$baseUrl?>app/plugins/summernote/summernote-bs4.min.css">
 
   <link rel="stylesheet" href="<?=$baseUrl?>app/assets/css/home.css">
+
+  <script src="https://unpkg.com/vue@3"></script>
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 
-<div class="loading w-100 h-100">
-	<div class="spinner-border text-white" role="status">
-		<span class="sr-only">Loading...</span>
-	</div>
-
-	<div class="text-white fs-4">Carregando...</div>
-</div>
-
-<div class="wrapper">
+  
+<div class="wrapper" id="app">
+  <div class="loading w-100 h-100" v-if="loading == true">
+    <div class="spinner-border text-white" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  
+    <div class="text-white fs-4">Carregando...</div>
+  </div>
+  
 	<header id="header" class="header-transparent">
         <?php $this->loadTemplate($templateData); ?>
     </header>
@@ -71,14 +75,13 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>150</h3>
+                <h3>{{acessos.total ? acessos.total : 0}}</h3>
 
-                <p>Lorem</p>
+                <p>Acessos (total)</p>
               </div>
               <div class="icon">
-                <i class="ion ion-bag"></i>
+                <!-- <i class="ion ion-bag"></i> -->
               </div>
-              <a href="#" class="small-box-footer">Mais informações <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -91,9 +94,8 @@
                 <p>Lorem</p>
               </div>
               <div class="icon">
-                <i class="ion ion-stats-bars"></i>
+                <!-- <i class="ion ion-stats-bars"></i> -->
               </div>
-              <a href="#" class="small-box-footer">Mais informações <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -106,9 +108,8 @@
                 <p>Lorem</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add"></i>
+                <!-- <i class="ion ion-person-add"></i> -->
               </div>
-              <a href="#" class="small-box-footer">Mais informações <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -121,9 +122,8 @@
                 <p>Lorem</p>
               </div>
               <div class="icon">
-                <i class="ion ion-pie-graph"></i>
+                <!-- <i class="ion ion-pie-graph"></i> -->
               </div>
-              <a href="#" class="small-box-footer">Mais informações <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
