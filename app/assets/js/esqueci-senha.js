@@ -13,7 +13,7 @@ $(document).ready(function(){
         clearErrors()
         loading()
         $.ajax({
-            url: baseUrl+'cadastro/cadastrar',
+            url: baseUrl+'api/esqueci-senha/reset-senha',
             type: "POST",             
             data: data, 
             dataType: 'json',                

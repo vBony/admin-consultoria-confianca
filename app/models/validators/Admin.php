@@ -26,6 +26,27 @@ class Admin  {
         }
     }
 
+    public function validateResetPassword($data){
+        $this->emailResetPassword($data);
+
+        $this->passwordOnCreate($data);
+        $this->validateResetPasswordToken($data);
+    }
+
+    public function emailResetPassword($data){
+        $admin = new modelAdmin();
+        $this->email($data);
+
+        if(empty($this->getMessage('email'))){
+            $email = $data['email'];
+            $isResetPassword = $admin->solicitouResetSenhaPorEmail($email);
+    
+            if(!$isResetPassword){
+                $this->messages['email'] = "Reset de senha não solicitado";
+            }
+        }
+    }
+
     public function getMessages(){
         return $this->messages;
     }
@@ -116,6 +137,27 @@ class Admin  {
         if(!empty($token)){
             if(!$modelToken->validate($token)){
                 $this->messages['token'] = 'Token inválido';
+            }
+        }else{
+            $this->messages['token'] = $this->emptyMessage;
+        }
+    }
+
+    public function validateResetPasswordToken($data){
+        $admin = new modelAdmin();
+        $modelToken = new AdminCreateToken();
+
+        $token = $data['token'];
+        $email = $data['email'];
+
+        
+        if(!empty($token)){
+            if(empty($this->getMessage('email'))){
+                $adminFind = $admin->buscarPorEmail($email);
+
+                if(!$modelToken->validateResetPassword($token, $adminFind['id'])){
+                    $this->messages['token'] = 'Token inválido';
+                }
             }
         }else{
             $this->messages['token'] = $this->emptyMessage;

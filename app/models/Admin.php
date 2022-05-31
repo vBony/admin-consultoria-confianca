@@ -45,6 +45,29 @@ class Admin extends modelHelper{
         }
     }
 
+    public function alterarSenha($id, $data){
+        $sql = "UPDATE {$this->table} SET password= :password, resetPassword= 0, updatedAt= :updatedAt WHERE id= :id";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':password', password_hash($data['password'], PASSWORD_BCRYPT));
+        $sql->bindValue(':updatedAt', date('Y-m-d H:i:s'));
+        $sql->bindValue(':id', $id);
+        $sql->execute();
+
+        try {
+            $this->db->beginTransaction();
+            $sql->execute();
+            $this->db->commit();
+
+            return true;
+        } catch(PDOException $e) {
+            $this->db->rollback();
+
+            // TODO: SALVAR ERRO NUMA TABELA DE LOG
+
+            return false;
+        }
+    }
+
     public function buscarPorEmail($email){
         $sql = "SELECT * FROM {$this->table} WHERE email = :email";
         $sql = $this->db->prepare($sql);
@@ -102,6 +125,19 @@ class Admin extends modelHelper{
         $sql = $this->db->prepare($sql);
         $sql->bindValue(':id', $idUsuario);
         $sql->execute();
+    }
+
+    public function solicitouResetSenhaPorEmail($email){
+        $sql = "SELECT * FROM {$this->table} WHERE email = :email and resetPassword = 1";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':email', $email);
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**
