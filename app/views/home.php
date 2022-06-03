@@ -75,7 +75,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{acessos.total ? acessos.total : 0}}</h3>
+                <h3>{{acessos.total ?? 0}}</h3>
 
                 <p>Acessos (total)</p>
               </div>
@@ -89,9 +89,9 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>53<sup style="font-size: 20px">%</sup></h3>
+                <h3>{{solicitacoes.atendidas ?? 0}}</h3>
 
-                <p>Lorem</p>
+                <p>Atendidas</p>
               </div>
               <div class="icon">
                 <!-- <i class="ion ion-stats-bars"></i> -->
@@ -103,9 +103,9 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>44</h3>
+                <h3>{{solicitacoes.pendentes ?? 0}}</h3>
 
-                <p>Lorem</p>
+                <p>Aguardando Atendimento</p>
               </div>
               <div class="icon">
                 <!-- <i class="ion ion-person-add"></i> -->
@@ -117,9 +117,9 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>65</h3>
+                <h3>{{solicitacoes.reprovadas ?? 0}}</h3>
 
-                <p>Lorem</p>
+                <p>Reprovadas</p>
               </div>
               <div class="icon">
                 <!-- <i class="ion ion-pie-graph"></i> -->
@@ -272,40 +272,9 @@
                   <i class="fas fa-map-marker-alt mr-1"></i>
                   Visitantes
                 </h3>
-                <!-- card tools -->
-                <div class="card-tools">
-                  <button type="button" class="btn btn-primary btn-sm daterange" title="Date range">
-                    <i class="far fa-calendar-alt"></i>
-                  </button>
-                  <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                </div>
-                <!-- /.card-tools -->
               </div>
               <div class="card-body">
                 <div id="world-map" style="height: 250px; width: 100%;"></div>
-              </div>
-              <!-- /.card-body-->
-              <div class="card-footer bg-transparent">
-                <div class="row">
-                  <div class="col-4 text-center">
-                    <div id="sparkline-1"></div>
-                    <div class="text-white">Visitantes</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <div id="sparkline-2"></div>
-                    <div class="text-white">Mensagens</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <div id="sparkline-3"></div>
-                    <div class="text-white">Lorem</div>
-                  </div>
-                  <!-- ./col -->
-                </div>
-                <!-- /.row -->
               </div>
             </div>
             <!-- /.card -->
@@ -471,7 +440,7 @@
 <script src="<?=$baseUrl?>app/plugins/sparklines/sparkline.js"></script>
 <!-- JQVMap -->
 <script src="<?=$baseUrl?>app/plugins/jqvmap/jquery.vmap.min.js"></script>
-<script src="<?=$baseUrl?>app/plugins/jqvmap/maps/jquery.vmap.brazil.js"></script>
+<script src="<?=$baseUrl?>app/plugins/jqvmap/maps/jquery.vmap.world.js"></script>
 <!-- jQuery Knob Chart -->
 <script src="<?=$baseUrl?>app/plugins/jquery-knob/jquery.knob.min.js"></script>
 <!-- daterangepicker -->

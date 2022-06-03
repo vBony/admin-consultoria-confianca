@@ -29,4 +29,28 @@ class Acessos extends modelHelper{
             return $data['total'];
         }
     }
+
+    public function totalPorPais(){
+        $sql  = "SELECT  ";
+        $sql .= "    ig.countryCode, ";
+        $sql .= "    count(acessos.id) as acessos ";
+        $sql .= "FROM {$this->table} ";
+        $sql .= "    INNER JOIN ipGeolocation ig on acessos.idIp = ig.id ";
+        $sql .= "WHERE ig.id NOT IN (1, 2) ";
+        $sql .= "GROUP BY ig.countryCode; ";
+
+        $sql = $this->db->prepare($sql);
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            $retorno = array();
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+            
+            foreach ($data as $row){
+                $retorno[$row['countryCode']] = $row['acessos'];
+            }
+
+            return $retorno;
+        }
+    }
 }

@@ -151,6 +151,39 @@ class Solicitacoes extends modelHelper{
         }
     }
 
+    public function total($short = false){
+        $sql = "SELECT count(*) as total FROM {$this->tabela}";
+        $sql = $this->db->prepare($sql);
+        $sql->execute();
+
+        $data = $sql->fetch(PDO::FETCH_ASSOC);
+
+        if($short){
+            $sanitazer = new sanitazerHelper();
+            
+            return $sanitazer->numberFormatShort($data['total']);
+        }else{
+            return $data['total'];
+        }
+    }
+
+    public function status($status, $short = false){
+        $sql = "SELECT count(*) as total FROM {$this->tabela} WHERE statusAdmin = :status";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':status', $status);
+        $sql->execute();
+
+        $data = $sql->fetch(PDO::FETCH_ASSOC);
+
+        if($short){
+            $sanitazer = new sanitazerHelper();
+            
+            return $sanitazer->numberFormatShort($data['total']);
+        }else{
+            return $data['total'];
+        }
+    }
+
     public function podeTornarAvaliador($id, $idAdmin){
         $solicitacao = $this->buscarPorId($id);
 

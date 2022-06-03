@@ -7,7 +7,8 @@
 
 /* global moment:false, Chart:false, Sparkline:false */
 
-$(function () {
+$( async function () {
+  // grarfico nao carrega por conta do async
   'use strict'
 
   // Make the dashboard widgets sortable Using jquery UI
@@ -50,23 +51,18 @@ $(function () {
   /* jQueryKnob */
   $('.knob').knob()
 
+  
+  // The Calender
+  $('#calendar').datetimepicker({
+    format: 'L',
+    inline: true
+  })
+
   // jvectormap data
-  var visitorsData = {
-    US: 398, // USA
-    SA: 400, // Saudi Arabia
-    CA: 1000, // Canada
-    DE: 500, // Germany
-    FR: 760, // France
-    CN: 300, // China
-    AU: 700, // Australia
-    BR: 600, // Brazil
-    IN: 800, // India
-    GB: 320, // Great Britain
-    RU: 3000 // Russia
-  }
+  var visitorsData = await getVisitorsData()
   // World map by jvectormap
   $('#world-map').vectorMap({
-    map: 'brazil_br',
+    map: 'world_mill',
     backgroundColor: 'transparent',
     regionStyle: {
       initial: {
@@ -80,13 +76,13 @@ $(function () {
     series: {
       regions: [{
         values: visitorsData,
-        scale: ['#ffffff', '#0154ad'],
+        scale: ['#C8EEFF', '#0071A4'],
         normalizeFunction: 'polynomial'
       }]
     },
-    onRegionLabelShow: function (e, el, code) {
-      if (typeof visitorsData[code] !== 'undefined') {
-        el.html(el.html() + ': ' + visitorsData[code] + ' new visitors')
+    onRegionTipShow: function(e, el, code){
+      if(visitorsData[code] !== undefined){
+        el.html(el.html()+': '+visitorsData[code]+' visitantes');
       }
     }
   })
@@ -99,17 +95,6 @@ $(function () {
   sparkline1.draw([1000, 1200, 920, 927, 931, 1027, 819, 930, 1021])
   sparkline2.draw([515, 519, 520, 522, 652, 810, 370, 627, 319, 630, 921])
   sparkline3.draw([15, 19, 20, 22, 33, 27, 31, 27, 19, 30, 21])
-
-  // The Calender
-  $('#calendar').datetimepicker({
-    format: 'L',
-    inline: true
-  })
-
-  // SLIMSCROLL FOR CHAT WIDGET
-  $('#chat-box').overlayScrollbars({
-    height: '250px'
-  })
 
   /* Chart.js Charts */
   // Sales chart
@@ -265,3 +250,25 @@ $(function () {
     options: salesGraphChartOptions
   })
 })
+
+async function getVisitorsData(){
+  return new Promise((resolve,reject)=>{
+    let baseUrl = $('#burl').val()
+
+    $.ajax({
+      url: baseUrl+'api/dashboard/get-visitantes-mapa',
+      type: "POST",              
+      dataType: 'json',                
+      success: (data) => {
+
+          if(data.acessos){
+              resolve(data.acessos)
+          }
+
+      },
+      complete: function(){
+          loadingComplete()
+      }
+    });
+  })
+}
