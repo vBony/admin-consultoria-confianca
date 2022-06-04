@@ -53,4 +53,39 @@ class Acessos extends modelHelper{
             return $retorno;
         }
     }
+
+    public function totalPorMes($ano){
+        $sql  = " SELECT ";
+        $sql .= "     extract(MONTH from ac.dataCriacao) AS mes, ";
+        $sql .= "     count(ac.id) AS total ";
+        $sql .= " FROM {$this->table} ac ";
+        $sql .= "     INNER JOIN ipGeolocation ig ON ac.idIp = ig.id ";
+        $sql .= " WHERE ig.id NOT IN (1,2) ";
+        $sql .= " AND extract(YEAR FROM ac.dataCriacao) = :ano ";
+        $sql .= " GROUP BY mes; ";
+
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':ano', $ano);
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            $retorno = array();
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Formatando no padrao [mes] => total
+            foreach ($data as $row){
+                $retorno[$row['mes']] = $row['total'];
+            }
+
+            // Complementando array com os meses que não possuiram acessos
+            $maxMeses = 12;
+            for($i = 0; $i <= $maxMeses; $i++){
+                if(!key_exists($i, $retorno)){
+                    $retorno[$i] = 0;
+                }
+            }
+
+            return $retorno;
+        }
+    }
 }

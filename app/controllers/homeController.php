@@ -46,19 +46,27 @@ class homeController extends controllerHelper{
         $data['solicitacoes'] = [
             'atendidas' => $solicitacoes->status(StatusAvaliacao::atendido(), true),
             'pendentes' => $solicitacoes->status(StatusAvaliacao::aguardando(), true),
-            'reprovadas' => $solicitacoes->status(StatusAvaliacao::reprovado(), true)
+            'reprovadas' => $solicitacoes->status(StatusAvaliacao::reprovado(), true),
+            'ultimasSolicitacoes' => $solicitacoes->maisRecentesDashboard()
         ];
 
         $this->response($data);
     }
 
-    public function getVisitantesMapa(){
+    public function getData(){
         $auth = new AuthAdmin();
         $auth->isLogged();
 
         $acessos = new Acessos();
+        $solicitacoes = new Solicitacoes();
 
-        $this->response(['acessos' => $acessos->totalPorPais()]);
+        $data = [
+            'acessos' => $acessos->totalPorPais(),
+            'acessosPorMes' => $acessos->totalPorMes(date('Y')),
+            'solicitacoesPorMes' => $solicitacoes->totalPorMes(date('Y'))
+        ]; 
+
+        $this->response($data);
     }
 }
 

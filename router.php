@@ -19,4 +19,4 @@ $routes['/esqueci-a-senha'] = '/esqueciSenha';
 $routes['/api/usuario/reset-senha'] = '/usuario/resetSenha';
 $routes['/api/esqueci-senha/reset-senha'] = '/esqueciSenha/resetarSenha';
 $routes['/api/dashboard/buscar-dados'] = '/home/buscarDados';
-$routes['/api/dashboard/get-visitantes-mapa'] = '/home/getVisitantesMapa';
+$routes['/api/dashboard/get-data'] = '/home/getData';

@@ -5,6 +5,7 @@ use core\modelHelper;
 use \PDO;
 use \PDOException;
 use \models\sanitazers\Solicitacoes as Sanitazer;
+use \models\flags\TipoSolicitacao as fTipoSolicitacao;
 use \models\Admin;
 use \models\flags\StatusAvaliacao;
 use sanitazerHelper;
@@ -167,6 +168,76 @@ class Solicitacoes extends modelHelper{
         }
     }
 
+    public function totalPorMes($ano){        
+        $sql  = " SELECT ";
+        $sql .= "     extract(MONTH from s.createdAt) AS mes, ";
+        $sql .= "     count(s.id) AS total ";
+        $sql .= " FROM {$this->tabela} s ";
+        $sql .= " WHERE extract(YEAR FROM s.createdAt) = :ano ";
+        $sql .= " GROUP BY mes; ";
+
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':ano', $ano);
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            $retorno = array();
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Formatando no padrao [mes] => total
+            foreach ($data as $row){
+                $retorno[$row['mes']] = $row['total'];
+            }
+
+            // Complementando array com os meses que não possuiram acessos
+            $maxMeses = 12;
+            for($i = 0; $i <= $maxMeses; $i++){
+                if(!key_exists($i, $retorno)){
+                    $retorno[$i] = 0;
+                }
+            }
+
+            return $retorno;
+        }
+    }
+
+    public function maisRecentesDashboard(){
+        $contato = new Contato();
+
+        $sql  = " SELECT ";
+        $sql .= "     s.id, ";
+        $sql .= "     s.nome, ";
+        $sql .= "     s.observacao, ";
+        $sql .= "     1 as tipoSolicitacao, ";
+        $sql .= "     s.statusAdmin, ";
+        $sql .= "     s.createdAt ";
+        $sql .= " FROM {$this->tabela} s ";
+        $sql .= " UNION ";
+        $sql .= " SELECT  ";
+        $sql .= "     c.id, ";
+        $sql .= "     c.nome, ";
+        $sql .= "     c.mensagem, ";
+        $sql .= "     2 as tipoSolicitacao, ";
+        $sql .= "     c.statusAdmin, ";
+        $sql .= "     c.createdAt ";
+        $sql .= " FROM {$contato->table} c ";
+        $sql .= " order by createdAt limit 4 ";
+        $sql = $this->db->prepare($sql);
+
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach($data as $key => $row){
+                $data[$key]['tipoSolicitacaoDescricao'] = fTipoSolicitacao::getDescricao($row['tipoSolicitacao']);
+                $data[$key]['eCreatedAt'] = Sanitazer::showCreatedAt($row['createdAt']);
+            }
+
+            return $data;
+        }
+    }
+
     public function status($status, $short = false){
         $sql = "SELECT count(*) as total FROM {$this->tabela} WHERE statusAdmin = :status";
         $sql = $this->db->prepare($sql);
@@ -234,5 +305,6 @@ class Solicitacoes extends modelHelper{
         $registro['adminDate'] = $this->sanitazerHelper->dataEHora($registro['adminDate'], true);
         return $registro;
     }
+
 
 }

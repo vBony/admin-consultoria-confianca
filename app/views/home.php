@@ -172,90 +172,35 @@
               	<!-- /.card-header -->
 				<div class="card-body p-0">
 					<ul class="products-list product-list-in-card pl-2 pr-2">
-						<li class="item">
+						<li class="item" v-for="solicitacao in solicitacoes.ultimasSolicitacoes" :key="solicitacao.createdAt">
 							<div class="product-img">
-								<i class="fas fa-dollar-sign"></i>
+								<i v-if="solicitacao.tipoSolicitacao == 2" class="fas fa-dollar-sign"></i>
+								<i v-if="solicitacao.tipoSolicitacao == 1"  class="far fa-envelope"></i>
 							</div>
 							<div class="product-info">
-								<a href="javascript:void(0)" class="product-title">
-									Luciano Ferreira <span class="text-muted ms-2">15h</span>
-									<span class="badge badge-warning float-right">Aguardando</span>
+								<a :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" class="product-title">
+									{{solicitacao.nome}} <span class="text-muted ms-2">{{solicitacao.eCreatedAt}}</span>
+									<span class="badge badge-warning float-right" v-if="solicitacao.statusAdmin == 0">Aguardando</span>
+                  					<span class="badge badge-info float-right" v-if="solicitacao.statusAdmin == 1">Em Atendimento</span>
+                 					<span class="badge badge-success float-right" v-if="solicitacao.statusAdmin == 2">Atendido</span>
+									<span class="badge badge-danger float-right" v-if="solicitacao.statusAdmin == 3">Reprovado</span>
 								</a>
 								<span class="product-description">
-									Posso dividir o valor do financiamento com outra pessoa? Estou perguntando porque meu amigo quer me ajudar a pagar
+									{{solicitacao.observacao != '' ? solicitacao.observacao : 'Nenhuma mensagem enviada'}}
 								</span>
 								<div class="product-subinfo">
-									<span class="product-type">Simulação</span>
-									<div class="product-si-divider"></div>
-									<span class="product-amount">R$200.000,00</span>
+									<span class="product-type">{{solicitacao.tipoSolicitacaoDescricao}}</span>
+									<div v-if="solicitacao.valorImovel > 0" class="product-si-divider"></div>
+									<span v-if="solicitacao.valorImovel > 0" class="product-amount">R${{solicitacao.valorImovel}}</span>
 								</div>
 							</div>
 						</li>
-						<!-- /.item -->
-						<li class="item">
-							<div class="product-img">
-								<i class="fas fa-dollar-sign"></i>
-							</div>
-							<div class="product-info">
-								<a href="javascript:void(0)" class="product-title">
-									Valdemir Santos <span class="text-muted ms-2">1d</span>
-									<span class="badge badge-info float-right">Em Atendimento</span>
-								</a>
-								<span class="product-description">
-									Queria poder financiar o valor em mais vezes porque estou desempregado e ganho pouco
-								</span>
-								<div class="product-subinfo">
-									<span class="product-type">Simulação</span>
-									<div class="product-si-divider"></div>
-									<span class="product-amount">R$50.000,00</span>
-								</div>
-							</div>
-						</li>
-						<!-- /.item -->
-						<li class="item">
-							<div class="product-img">
-								<i class="far fa-envelope"></i>
-							</div>
-							<div class="product-info">
-								<a href="javascript:void(0)" class="product-title">
-									Luciana Aparecida <span class="text-muted ms-2">2d</span>
-									<span class="badge badge-danger float-right">Reprovado</span>
-								</a>
-								<span class="product-description">
-									Não tenho nada de útil para enviar, então estou escrevendo qualquer coisa para irrita-los
-								</span>
-								<div class="product-subinfo">
-									<span class="product-type">Contato</span>
-									<span class="product-amount"></span>
-								</div>
-							</div>
-						</li>
-						<!-- /.item -->
-						<li class="item">
-							<div class="product-img">
-								<i class="far fa-envelope"></i>
-							</div>
-							<div class="product-info">
-								<a href="javascript:void(0)" class="product-title">
-									Bianca Eduarda <span class="text-muted ms-2">14d</span>
-									<span class="badge badge-success float-right">Atendido</span>
-								</a>
-								<span class="product-description">
-									Bom dia, tenho interesse em fazer um empréstimo para comprar uma casa nova, mas estou com o nome sujo
-								</span>
-								<div class="product-subinfo">
-									<span class="product-type">Contato</span>
-									<span class="product-amount"></span>
-								</div>
-							</div>
-						</li>
-					<!-- /.item -->
 					</ul>
 				</div>
               <!-- /.card-body -->
-              <div class="card-footer text-center">
-                <a href="javascript:void(0)" class="uppercase">Ver todas as mensagens</a>
-              </div>
+				<div class="card-footer text-center">
+					<a href="<?=$baseUrl?>solicitacoes" target="_blank" class="uppercase">Ver todas as mensagens</a>
+				</div>
               <!-- /.card-footer -->
             </div>
 			
