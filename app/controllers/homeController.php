@@ -3,6 +3,8 @@ use auth\Admin as AuthAdmin;
 use models\Admin;
 use core\controllerHelper;
 use models\Acessos;
+use models\flags\StatusAvaliacao;
+use models\Solicitacoes;
 
 class homeController extends controllerHelper{
     private $Admin;
@@ -35,10 +37,34 @@ class homeController extends controllerHelper{
         $auth->isLogged();
 
         $acessos = new Acessos();
+        $solicitacoes = new Solicitacoes();
         
         $data['acessos'] = [
             'total' => $acessos->total(true)
         ];
+
+        $data['solicitacoes'] = [
+            'atendidas' => $solicitacoes->status(StatusAvaliacao::atendido(), true),
+            'pendentes' => $solicitacoes->status(StatusAvaliacao::aguardando(), true),
+            'reprovadas' => $solicitacoes->status(StatusAvaliacao::reprovado(), true),
+            'ultimasSolicitacoes' => $solicitacoes->maisRecentesDashboard()
+        ];
+
+        $this->response($data);
+    }
+
+    public function getData(){
+        $auth = new AuthAdmin();
+        $auth->isLogged();
+
+        $acessos = new Acessos();
+        $solicitacoes = new Solicitacoes();
+
+        $data = [
+            'acessos' => $acessos->totalPorPais(),
+            'acessosPorMes' => $acessos->totalPorMes(date('Y')),
+            'solicitacoesPorMes' => $solicitacoes->totalPorMes(date('Y'))
+        ]; 
 
         $this->response($data);
     }

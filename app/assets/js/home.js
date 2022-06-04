@@ -4,6 +4,7 @@ Vue.createApp({
             loading: false,
             baseUrl: $('#burl').val(),
             acessos: [],
+            solicitacoes: [],
             idAdmin: 0
         }
     },
@@ -54,6 +55,7 @@ Vue.createApp({
                 dataType: 'json',                
                 success: (data) => {
                     this.acessos = data.acessos
+                    this.solicitacoes = data.solicitacoes
                 },
                 complete: () => {
                     this.loading = false
@@ -69,6 +71,7 @@ Vue.createApp({
         })
 
         this.buscarDadosIniciais()
+
     }
 }).mount('#app')
 

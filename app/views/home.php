@@ -75,7 +75,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{acessos.total ? acessos.total : 0}}</h3>
+                <h3>{{acessos.total ?? 0}}</h3>
 
                 <p>Acessos (total)</p>
               </div>
@@ -89,9 +89,9 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>53<sup style="font-size: 20px">%</sup></h3>
+                <h3>{{solicitacoes.atendidas ?? 0}}</h3>
 
-                <p>Lorem</p>
+                <p>Atendidas</p>
               </div>
               <div class="icon">
                 <!-- <i class="ion ion-stats-bars"></i> -->
@@ -103,9 +103,9 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>44</h3>
+                <h3>{{solicitacoes.pendentes ?? 0}}</h3>
 
-                <p>Lorem</p>
+                <p>Aguardando Atendimento</p>
               </div>
               <div class="icon">
                 <!-- <i class="ion ion-person-add"></i> -->
@@ -117,9 +117,9 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>65</h3>
+                <h3>{{solicitacoes.reprovadas ?? 0}}</h3>
 
-                <p>Lorem</p>
+                <p>Reprovadas</p>
               </div>
               <div class="icon">
                 <!-- <i class="ion ion-pie-graph"></i> -->
@@ -172,90 +172,35 @@
               	<!-- /.card-header -->
 				<div class="card-body p-0">
 					<ul class="products-list product-list-in-card pl-2 pr-2">
-						<li class="item">
+						<li class="item" v-for="solicitacao in solicitacoes.ultimasSolicitacoes" :key="solicitacao.createdAt">
 							<div class="product-img">
-								<i class="fas fa-dollar-sign"></i>
+								<i v-if="solicitacao.tipoSolicitacao == 2" class="fas fa-dollar-sign"></i>
+								<i v-if="solicitacao.tipoSolicitacao == 1"  class="far fa-envelope"></i>
 							</div>
 							<div class="product-info">
-								<a href="javascript:void(0)" class="product-title">
-									Luciano Ferreira <span class="text-muted ms-2">15h</span>
-									<span class="badge badge-warning float-right">Aguardando</span>
+								<a :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" class="product-title">
+									{{solicitacao.nome}} <span class="text-muted ms-2">{{solicitacao.eCreatedAt}}</span>
+									<span class="badge badge-warning float-right" v-if="solicitacao.statusAdmin == 0">Aguardando</span>
+                  					<span class="badge badge-info float-right" v-if="solicitacao.statusAdmin == 1">Em Atendimento</span>
+                 					<span class="badge badge-success float-right" v-if="solicitacao.statusAdmin == 2">Atendido</span>
+									<span class="badge badge-danger float-right" v-if="solicitacao.statusAdmin == 3">Reprovado</span>
 								</a>
 								<span class="product-description">
-									Posso dividir o valor do financiamento com outra pessoa? Estou perguntando porque meu amigo quer me ajudar a pagar
+									{{solicitacao.observacao != '' ? solicitacao.observacao : 'Nenhuma mensagem enviada'}}
 								</span>
 								<div class="product-subinfo">
-									<span class="product-type">Simulação</span>
-									<div class="product-si-divider"></div>
-									<span class="product-amount">R$200.000,00</span>
+									<span class="product-type">{{solicitacao.tipoSolicitacaoDescricao}}</span>
+									<div v-if="solicitacao.valorImovel > 0" class="product-si-divider"></div>
+									<span v-if="solicitacao.valorImovel > 0" class="product-amount">R${{solicitacao.valorImovel}}</span>
 								</div>
 							</div>
 						</li>
-						<!-- /.item -->
-						<li class="item">
-							<div class="product-img">
-								<i class="fas fa-dollar-sign"></i>
-							</div>
-							<div class="product-info">
-								<a href="javascript:void(0)" class="product-title">
-									Valdemir Santos <span class="text-muted ms-2">1d</span>
-									<span class="badge badge-info float-right">Em Atendimento</span>
-								</a>
-								<span class="product-description">
-									Queria poder financiar o valor em mais vezes porque estou desempregado e ganho pouco
-								</span>
-								<div class="product-subinfo">
-									<span class="product-type">Simulação</span>
-									<div class="product-si-divider"></div>
-									<span class="product-amount">R$50.000,00</span>
-								</div>
-							</div>
-						</li>
-						<!-- /.item -->
-						<li class="item">
-							<div class="product-img">
-								<i class="far fa-envelope"></i>
-							</div>
-							<div class="product-info">
-								<a href="javascript:void(0)" class="product-title">
-									Luciana Aparecida <span class="text-muted ms-2">2d</span>
-									<span class="badge badge-danger float-right">Reprovado</span>
-								</a>
-								<span class="product-description">
-									Não tenho nada de útil para enviar, então estou escrevendo qualquer coisa para irrita-los
-								</span>
-								<div class="product-subinfo">
-									<span class="product-type">Contato</span>
-									<span class="product-amount"></span>
-								</div>
-							</div>
-						</li>
-						<!-- /.item -->
-						<li class="item">
-							<div class="product-img">
-								<i class="far fa-envelope"></i>
-							</div>
-							<div class="product-info">
-								<a href="javascript:void(0)" class="product-title">
-									Bianca Eduarda <span class="text-muted ms-2">14d</span>
-									<span class="badge badge-success float-right">Atendido</span>
-								</a>
-								<span class="product-description">
-									Bom dia, tenho interesse em fazer um empréstimo para comprar uma casa nova, mas estou com o nome sujo
-								</span>
-								<div class="product-subinfo">
-									<span class="product-type">Contato</span>
-									<span class="product-amount"></span>
-								</div>
-							</div>
-						</li>
-					<!-- /.item -->
 					</ul>
 				</div>
               <!-- /.card-body -->
-              <div class="card-footer text-center">
-                <a href="javascript:void(0)" class="uppercase">Ver todas as mensagens</a>
-              </div>
+				<div class="card-footer text-center">
+					<a href="<?=$baseUrl?>solicitacoes" target="_blank" class="uppercase">Ver todas as mensagens</a>
+				</div>
               <!-- /.card-footer -->
             </div>
 			
@@ -272,40 +217,9 @@
                   <i class="fas fa-map-marker-alt mr-1"></i>
                   Visitantes
                 </h3>
-                <!-- card tools -->
-                <div class="card-tools">
-                  <button type="button" class="btn btn-primary btn-sm daterange" title="Date range">
-                    <i class="far fa-calendar-alt"></i>
-                  </button>
-                  <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                </div>
-                <!-- /.card-tools -->
               </div>
               <div class="card-body">
                 <div id="world-map" style="height: 250px; width: 100%;"></div>
-              </div>
-              <!-- /.card-body-->
-              <div class="card-footer bg-transparent">
-                <div class="row">
-                  <div class="col-4 text-center">
-                    <div id="sparkline-1"></div>
-                    <div class="text-white">Visitantes</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <div id="sparkline-2"></div>
-                    <div class="text-white">Mensagens</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <div id="sparkline-3"></div>
-                    <div class="text-white">Lorem</div>
-                  </div>
-                  <!-- ./col -->
-                </div>
-                <!-- /.row -->
               </div>
             </div>
             <!-- /.card -->
@@ -471,7 +385,7 @@
 <script src="<?=$baseUrl?>app/plugins/sparklines/sparkline.js"></script>
 <!-- JQVMap -->
 <script src="<?=$baseUrl?>app/plugins/jqvmap/jquery.vmap.min.js"></script>
-<script src="<?=$baseUrl?>app/plugins/jqvmap/maps/jquery.vmap.brazil.js"></script>
+<script src="<?=$baseUrl?>app/plugins/jqvmap/maps/jquery.vmap.world.js"></script>
 <!-- jQuery Knob Chart -->
 <script src="<?=$baseUrl?>app/plugins/jquery-knob/jquery.knob.min.js"></script>
 <!-- daterangepicker -->
