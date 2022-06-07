@@ -1,9 +1,11 @@
 Vue.createApp({
     data() {
         return {
+            loadingDataDashboard: true,
             loading: false,
             baseUrl: $('#burl').val(),
             acessos: [],
+            membros: [],
             solicitacoes: [],
             idAdmin: 0
         }
@@ -56,9 +58,12 @@ Vue.createApp({
                 success: (data) => {
                     this.acessos = data.acessos
                     this.solicitacoes = data.solicitacoes
+                    this.membros = data.membros
+
+                    console.log(this.membros);
                 },
                 complete: () => {
-                    this.loading = false
+                    this.loadingDataDashboard = false
                 }
             });
         }

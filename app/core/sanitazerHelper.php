@@ -11,7 +11,7 @@ class sanitazerHelper {
 
         $restanteValidade = '';
 
-        $dias = $diff->format('%d');
+        $dias = $diff->days;
         $horas = $diff->format('%H');
         $minutos = $diff->format('%i');
         

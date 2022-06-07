@@ -2,6 +2,7 @@
 use auth\Admin as AuthAdmin;
 use models\Admin;
 use core\controllerHelper;
+use models\flags\StatusAvaliacao;
 use models\Solicitacoes;
 class solicitacoesController extends controllerHelper{
     private $Admin;
@@ -32,11 +33,19 @@ class solicitacoesController extends controllerHelper{
     }
 
     public function buscar(){
+        $auth = new AuthAdmin();
+        $auth->isLogged();
+        $adminId = $auth->getIdUserLogged();
+
         $filtros = !empty($_POST['filtros']) ? $_POST['filtros'] : array();
 
-        $solicitacoes = $this->Solicitacoes->buscar($filtros);
+        $solicitacoes = $this->Solicitacoes->buscar($filtros, $adminId);
 
-        $this->response(['solicitacoes' => $solicitacoes]);
+        $this->response([
+            'solicitacoes' => $solicitacoes,
+            'minhasSolicitacoes' => $this->Solicitacoes->minhasSolicitacoesCount($adminId),
+            'status' => StatusAvaliacao::map()
+        ]);
     }
 }
 

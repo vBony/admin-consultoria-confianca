@@ -76,30 +76,24 @@
                                 <div id="accordion">
                                     <ul class="nav nav-pills flex-column">
                                         <li class="nav-item active">
-                                            <a href="#" class="nav-link main-nav-item d-flex align-items-center">
+                                            <a href="#" class="nav-link main-nav-item d-flex align-items-center" @click="setMinhasSolicitacoes()">
                                                 <i class="fas fa-user mr-2"></i> 
                                                 Minhas avaliações
-                                                <span class="badge badge-info ml-auto">6</span>
+                                                <span class="badge badge-info ml-auto">{{minhasSolicitacoes}}</span>
                                             </a>
                                         </li>
 
                                         <li class="nav-item active" id="headTipoSolicitacao">
                                             <a href="#" class="nav-link main-nav-item d-flex align-items-center" data-toggle="collapse" data-target="#collapseTipoSolicitacao" aria-expanded="true" aria-controls="collapseTipoSolicitacao">
                                                 <i class="fas fa-clipboard-list mr-2"></i> 
-                                                Tipo de solicitação
+                                                Status
                                                 <i class="fas fa-angle-down ml-auto"></i>
                                             </a>
 
                                             <ul class="collapse-filtro collapse" id="collapseTipoSolicitacao" aria-labelledby="headTipoSolicitacao" data-parent="#accordion">
-                                                <li class="nav-item active">
-                                                    <a href="#" class="nav-link">
-                                                        Financiamento
-                                                    </a>
-                                                </li>
-    
-                                                <li class="nav-item active">
-                                                    <a href="#" class="nav-link">
-                                                        Contato
+                                                <li class="nav-item active" v-for="(status, id) in listaStatus">
+                                                    <a href="#" class="nav-link" data-id="id">
+                                                        <label><input type="checkbox" class="mr-2" @change="addStatus(id)">{{status}}</label>
                                                     </a>
                                                 </li>
                                             </ul>

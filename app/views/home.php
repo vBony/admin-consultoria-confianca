@@ -34,7 +34,7 @@
 <body class="hold-transition sidebar-mini layout-fixed">
 
   
-<div class="wrapper" id="app">
+<div class="wrapper" id="app" v-cloak>
   <div class="loading w-100 h-100" v-if="loading == true">
     <div class="spinner-border text-white" role="status">
       <span class="sr-only">Loading...</span>
@@ -75,7 +75,8 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{acessos.total ?? 0}}</h3>
+                <h3 v-if="loadingDataDashboard">...</h3>
+                <h3 v-else>{{acessos.total ?? 0}}</h3>
 
                 <p>Acessos (total)</p>
               </div>
@@ -89,7 +90,8 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>{{solicitacoes.atendidas ?? 0}}</h3>
+                <h3 v-if="loadingDataDashboard">...</h3>
+                <h3 v-else>{{solicitacoes.atendidas ?? 0}}</h3>
 
                 <p>Atendidas</p>
               </div>
@@ -103,7 +105,8 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>{{solicitacoes.pendentes ?? 0}}</h3>
+                <h3 v-if="loadingDataDashboard">...</h3>
+                <h3 v-else>{{solicitacoes.pendentes ?? 0}}</h3>
 
                 <p>Aguardando Atendimento</p>
               </div>
@@ -117,7 +120,8 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>{{solicitacoes.reprovadas ?? 0}}</h3>
+                <h3 v-if="loadingDataDashboard">...</h3>
+                <h3 v-else>{{solicitacoes.reprovadas ?? 0}}</h3>
 
                 <p>Reprovadas</p>
               </div>
@@ -270,7 +274,7 @@
 					<h3 class="card-title">Últimos membros</h3>
 
 					<div class="card-tools">
-						<span class="badge badge-danger">8 Membros novos</span>
+						<span class="badge badge-danger">{{membros.totalMembros}} Membros</span>
 						<button type="button" class="btn btn-tool" data-card-widget="collapse">
 							<i class="fas fa-minus"></i>
 						</button>
@@ -282,61 +286,12 @@
 				<!-- /.card-header -->
 				<div class="card-body p-0">
 					<ul class="users-list clearfix">
-						<li>
+						<li v-for="membro in membros.membros" :key="membro.id">
 							<div class="new-users-avatar">
-								<img src="<?=$baseUrl?>app/assets/imgs/avatar/default.png" alt="User Image">
+								<img :src="membro.urlAvatar" alt="User Image">
 							</div>
-							<a class="users-list-name" href="#">Lorem Lorem</a>
-							<span class="users-list-date">Hoje</span>
-						</li>
-						<li>
-							<div class="new-users-avatar">
-								<img src="<?=$baseUrl?>app/assets/imgs/avatar/default.png" alt="User Image">
-							</div>
-							<a class="users-list-name" href="#">Lorem Lorem</a>
-							<span class="users-list-date">Ontem</span>
-						</li>
-						<li>
-							<div class="new-users-avatar">
-								<img src="<?=$baseUrl?>app/assets/imgs/avatar/default.png" alt="User Image">
-							</div>
-							<a class="users-list-name" href="#">Lorem Lorem</a>
-							<span class="users-list-date">12 Jan</span>
-						</li>
-						<li>
-							<div class="new-users-avatar">
-								<img src="<?=$baseUrl?>app/assets/imgs/avatar/default.png" alt="User Image">
-							</div>
-							<a class="users-list-name" href="#">Lorem Lorem</a>
-							<span class="users-list-date">12 Jan</span>
-						</li>
-						<li>
-							<div class="new-users-avatar">
-								<img src="<?=$baseUrl?>app/assets/imgs/avatar/default.png" alt="User Image">
-							</div>
-							<a class="users-list-name" href="#">Lorem Lorem</a>
-							<span class="users-list-date">13 Jan</span>
-						</li>
-						<li>
-							<div class="new-users-avatar">
-								<img src="<?=$baseUrl?>app/assets/imgs/avatar/default.png" alt="User Image">
-							</div>
-							<a class="users-list-name" href="#">Lorem Lorem</a>
-							<span class="users-list-date">14 Jan</span>
-						</li>
-						<li>
-							<div class="new-users-avatar">
-								<img src="<?=$baseUrl?>app/assets/imgs/avatar/default.png" alt="User Image">
-							</div>
-							<a class="users-list-name" href="#">Lorem Lorem</a>
-							<span class="users-list-date">15 Jan</span>
-						</li>
-						<li>
-							<div class="new-users-avatar">
-								<img src="<?=$baseUrl?>app/assets/imgs/avatar/default.png" alt="User Image">
-							</div>
-							<a class="users-list-name" href="#">Lorem Lorem</a>
-							<span class="users-list-date">15 Jan</span>
+							<a class="users-list-name" target="_blank" :href="'<?=$baseUrl?>usuario/perfil/' + membro.id">{{membro.name + ' ' + membro.lastName}}</a>
+							<span class="users-list-date">{{membro.createdAtFormatted}}</span>
 						</li>
 					</ul>
 					<!-- /.users-list -->
