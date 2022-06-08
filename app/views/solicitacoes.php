@@ -183,15 +183,15 @@
                                                 <span class="badge badge-danger" v-if="solicitacao.statusAdmin == 3">Reprovado</span>
                                             </td>
                                             <td class="project-actions text-right">
-                                                <a class="btn btn-primary btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-if="solicitacao.idAdmin == idAdmin">
+                                                <a class="btn btn-primary btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id+(solicitacao.tipoSolicitacao == 2 ? '?tipo=contato' : '')" target="_blank" v-if="solicitacao.idAdmin == idAdmin">
                                                     <i class="fas fa-reply"></i>
                                                 </a>
 
-                                                <a class="btn btn-secondary btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-else-if="solicitacao.statusAdmin == 1 || solicitacao.statusAdmin == 2 && solicitacao.idAdmin != idAdmin">
+                                                <a class="btn btn-secondary btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id+(solicitacao.tipoSolicitacao == 2 ? '?tipo=contato' : '')" target="_blank" v-else-if="solicitacao.statusAdmin == 1 || solicitacao.statusAdmin == 2 && solicitacao.idAdmin != idAdmin">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
 
-                                                <a class="btn btn-success btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" v-else>
+                                                <a class="btn btn-success btn-sm" :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id+(solicitacao.tipoSolicitacao == 2 ? '?tipo=contato' : '')" target="_blank" v-else>
                                                     <i class="fas fa-plus"></i>
                                                 </a>
                                             </td>

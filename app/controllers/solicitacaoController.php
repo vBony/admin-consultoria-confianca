@@ -21,7 +21,9 @@ class solicitacaoController extends controllerHelper{
     }
 
     public function id($id){
-        $solicitacao = $this->Solicitacoes->buscarPorId($id);
+        $tipoSolicitacao = $this->safeData($_GET, 'tipo');
+
+        $solicitacao = $this->Solicitacoes->buscarPorId($id, $tipoSolicitacao);
 
         $this->Auth->isLogged();
 
