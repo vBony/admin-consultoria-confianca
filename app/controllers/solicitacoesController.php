@@ -3,6 +3,7 @@ use auth\Admin as AuthAdmin;
 use models\Admin;
 use core\controllerHelper;
 use models\flags\StatusAvaliacao;
+use models\flags\TipoSolicitacao;
 use models\Solicitacoes;
 class solicitacoesController extends controllerHelper{
     private $Admin;
@@ -44,7 +45,8 @@ class solicitacoesController extends controllerHelper{
         $this->response([
             'solicitacoes' => $solicitacoes,
             'minhasSolicitacoes' => $this->Solicitacoes->minhasSolicitacoesCount($adminId),
-            'status' => StatusAvaliacao::map()
+            'status' => StatusAvaliacao::map(),
+            'tiposSolicitacao' => TipoSolicitacao::map()
         ]);
     }
 }

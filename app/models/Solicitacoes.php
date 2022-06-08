@@ -28,19 +28,44 @@ class Solicitacoes extends modelHelper{
     public function buscar($filtros, $idAdmin){
         $status = $this->getStatus($filtros);
         $minhasSolicitacoes = $this->getMinhasSolicitacoes($filtros);
+        $tipoSolicitacao = $this->getTipoSolicitacao($filtros);
 
-        $sql  = "SELECT * FROM {$this->tabela} ";
-        $sql .= "WHERE id > 0 ";
-
-        if(!empty($status)){
-            $sql .= "AND statusAdmin IN ({$status['templates']}) ";
+        if($this->soSimulacao($tipoSolicitacao) || ( $this->todasSolicitacoes($tipoSolicitacao) ) || empty($tipoSolicitacao)){
+            $sql  = "SELECT s.id, s.nome, s.idAdmin, s.statusAdmin, s.createdAt, 1 as tipoSolicitacao, s.formasContato, s.adminDate FROM {$this->tabela} s ";
+            $sql .= "WHERE id > 0 ";
+    
+            if(!empty($status)){
+                $sql .= "AND statusAdmin IN ({$status['templates']}) ";
+            }
+    
+            if($minhasSolicitacoes){
+                $sql .= "AND idAdmin = :idAdmin ";
+            }
+        }
+        
+        if(($this->todasSolicitacoes($tipoSolicitacao)) || empty($tipoSolicitacao)){
+            $sql .= " UNION ";
         }
 
-        if($minhasSolicitacoes){
-            $sql .= "AND idAdmin = :idAdmin";
+        if($this->soContato($tipoSolicitacao) || ($this->todasSolicitacoes($tipoSolicitacao)) || empty($tipoSolicitacao)){
+            if($this->soContato($tipoSolicitacao)){
+                $sql  = "SELECT c.id, c.nome, c.idAdmin, c.statusAdmin, c.createdAt, 2 as tipoSolicitacao, null as formasContato, c.adminDate FROM {$this->tableContato} c ";
+            }else{
+                $sql  .= "SELECT c.id, c.nome, c.idAdmin, c.statusAdmin, c.createdAt, 2 as tipoSolicitacao, null as formasContato, c.adminDate FROM {$this->tableContato} c ";
+            }
+
+            $sql .= "WHERE id > 0 ";
+
+            if(!empty($status)){
+                $sql .= "AND statusAdmin IN ({$status['templates']}) ";
+            }
+    
+            if($minhasSolicitacoes){
+                $sql .= "AND idAdmin = :idAdmin ";
+            }
         }
 
-        $sql .= "ORDER BY createdAt DESC, statusAdmin DESC";
+        $sql .= "ORDER BY createdAt DESC, statusAdmin DESC";       
         $sql = $this->db->prepare($sql);
 
         if(!empty($status)){
@@ -59,6 +84,30 @@ class Solicitacoes extends modelHelper{
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
 
             return $this->montarRegistros($data);
+        }
+    }
+
+    public function soSimulacao($tipoSolicitacao){
+        if(!in_array(fTipoSolicitacao::contato(), $tipoSolicitacao) && in_array(fTipoSolicitacao::simulacao(), $tipoSolicitacao)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function soContato($tipoSolicitacao){
+        if(in_array(fTipoSolicitacao::contato(), $tipoSolicitacao) && !in_array(fTipoSolicitacao::simulacao(), $tipoSolicitacao)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function todasSolicitacoes($tipoSolicitacao){
+        if(in_array(fTipoSolicitacao::contato(), $tipoSolicitacao) && in_array(fTipoSolicitacao::simulacao(), $tipoSolicitacao)){
+            return true;
+        }else{
+            return false;
         }
     }
 
@@ -81,6 +130,18 @@ class Solicitacoes extends modelHelper{
             }
         }else{
             return false;
+        }
+    }
+
+    public function getTipoSolicitacao($filtros){
+        if(isset($filtros['tiposSolicitacoes'])){
+            if(count($filtros['tiposSolicitacoes']) > 0){
+                return $filtros['tiposSolicitacoes'];
+            }else{
+                return array();
+            }
+        }else{
+            return array();
         }
     }
 

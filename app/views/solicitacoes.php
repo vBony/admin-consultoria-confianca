@@ -76,7 +76,7 @@
                                 <div id="accordion">
                                     <ul class="nav nav-pills flex-column">
                                         <li class="nav-item active">
-                                            <a href="#" class="nav-link main-nav-item d-flex align-items-center" @click="setMinhasSolicitacoes()">
+                                            <a href="#" id="minhasSolicitacoesBtn" class="nav-link main-nav-item d-flex align-items-center" @click="setMinhasSolicitacoes()">
                                                 <i class="fas fa-user mr-2"></i> 
                                                 Minhas avaliações
                                                 <span class="badge badge-info ml-auto">{{minhasSolicitacoes}}</span>
@@ -84,16 +84,32 @@
                                         </li>
 
                                         <li class="nav-item active" id="headTipoSolicitacao">
-                                            <a href="#" class="nav-link main-nav-item d-flex align-items-center" data-toggle="collapse" data-target="#collapseTipoSolicitacao" aria-expanded="true" aria-controls="collapseTipoSolicitacao">
-                                                <i class="fas fa-clipboard-list mr-2"></i> 
+                                            <a href="#" class="nav-link main-nav-item d-flex align-items-center" data-toggle="collapse" data-target="#collapseStatus" aria-expanded="true" aria-controls="collapseStatus">
+                                                <i class="fas fa-info-circle mr-2"></i>
                                                 Status
                                                 <i class="fas fa-angle-down ml-auto"></i>
                                             </a>
 
-                                            <ul class="collapse-filtro collapse" id="collapseTipoSolicitacao" aria-labelledby="headTipoSolicitacao" data-parent="#accordion">
+                                            <ul class="collapse-filtro collapse" id="collapseStatus" aria-labelledby="headStatus" data-parent="#accordion">
                                                 <li class="nav-item active" v-for="(status, id) in listaStatus">
                                                     <a href="#" class="nav-link" data-id="id">
-                                                        <label><input type="checkbox" class="mr-2" @change="addStatus(id)">{{status}}</label>
+                                                        <label><input type="checkbox" class="mr-2" :value="id" v-model="filtros.status" @change="buscarSolicitacoes()">{{status}}</label>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+
+                                        <li class="nav-item active" id="headTipoSolicitacao">
+                                            <a href="#" class="nav-link main-nav-item d-flex align-items-center" data-toggle="collapse" data-target="#collapseTipoSolicitacao" aria-expanded="true" aria-controls="collapseTipoSolicitacao">
+                                                <i class="fas fa-clipboard-list mr-2"></i> 
+                                                Tipos de Solicitações
+                                                <i class="fas fa-angle-down ml-auto"></i>
+                                            </a>
+
+                                            <ul class="collapse-filtro collapse" id="collapseTipoSolicitacao" aria-labelledby="headTiposSolicitacao" data-parent="#accordion">
+                                                <li class="nav-item active" v-for="(name, id) in tiposSolicitacao">
+                                                    <a href="#" class="nav-link" data-id="id">
+                                                        <label><input type="checkbox" class="mr-2" @change="buscarSolicitacoes()" :value="id" v-model="filtros.tiposSolicitacoes">{{name}}</label>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -121,6 +137,7 @@
                                 <table class="table table-striped table-responsive projects">
                                     <thead>
                                         <tr>
+                                            <th></th>
                                             <th style="width: 40%">
                                                 Nome
                                             </th>
@@ -136,6 +153,10 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="solicitacao in solicitacoes" :key="solicitacao.id">
+                                            <td>
+                                                <i v-if="solicitacao.tipoSolicitacao == 1" class="fas fa-dollar-sign"></i>
+								                <i v-if="solicitacao.tipoSolicitacao == 2"  class="far fa-envelope"></i>
+                                            </td>
                                             <td>
                                                 <a>
                                                     {{solicitacao.nome}}

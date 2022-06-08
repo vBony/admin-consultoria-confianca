@@ -178,8 +178,8 @@
 					<ul class="products-list product-list-in-card pl-2 pr-2">
 						<li class="item" v-for="solicitacao in solicitacoes.ultimasSolicitacoes" :key="solicitacao.createdAt">
 							<div class="product-img">
-								<i v-if="solicitacao.tipoSolicitacao == 2" class="fas fa-dollar-sign"></i>
-								<i v-if="solicitacao.tipoSolicitacao == 1"  class="far fa-envelope"></i>
+								<i v-if="solicitacao.tipoSolicitacao == 1" class="fas fa-dollar-sign"></i>
+								<i v-if="solicitacao.tipoSolicitacao == 2"  class="far fa-envelope"></i>
 							</div>
 							<div class="product-info">
 								<a :href="'<?=$baseUrl?>solicitacao/'+solicitacao.id" target="_blank" class="product-title">

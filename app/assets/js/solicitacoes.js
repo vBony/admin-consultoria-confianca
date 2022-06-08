@@ -4,12 +4,14 @@ Vue.createApp({
             loading: false,
             baseUrl: $('#baseUrl').val(),
             solicitacoes: [],
+            tiposSolicitacao: [],
             idAdmin: 0,
             listaStatus: [],
             minhasSolicitacoes: 0,
             filtros: {
                 minhasSolicitacoes: false,
-                status: []
+                status: [],
+                tiposSolicitacoes: []
             }
         }
     },
@@ -31,6 +33,7 @@ Vue.createApp({
                     this.listaStatus = data.status
                     this.solicitacoes = data.solicitacoes
                     this.minhasSolicitacoes = data.minhasSolicitacoes
+                    this.tiposSolicitacao = data.tiposSolicitacao
 
                     this.loading = false
                 },
@@ -56,31 +59,20 @@ Vue.createApp({
             });
         },
 
-        addStatus(id){
-            let found = false
-
-            for (var i=0; i <= this.filtros.status.length; i++){
-                if (this.filtros.status[i] == id){                    
-                    this.filtros.status.splice(i, 1)
-                    found = true
-                }
-            }
-
-            if(!found){
-                this.filtros.status.push(id)
+        setMinhasSolicitacoes(){
+            if(this.filtros.minhasSolicitacoes === true){
+                this.filtros.minhasSolicitacoes = false
+                $('#minhasSolicitacoesBtn').removeClass('active')
+            }else{
+                this.filtros.minhasSolicitacoes = true
+                $('#minhasSolicitacoesBtn').addClass('active')
             }
 
             this.buscarSolicitacoes()
         },
 
-        setMinhasSolicitacoes(){
-            if(this.filtros.minhasSolicitacoes === true){
-                this.filtros.minhasSolicitacoes = false
-            }else{
-                this.filtros.minhasSolicitacoes = true
-            }
-
-            this.buscarSolicitacoes()
+        addTipoSolicitacao(){
+            console.log(this.filtros.tiposSolicitacoes);
         }
     },
 
