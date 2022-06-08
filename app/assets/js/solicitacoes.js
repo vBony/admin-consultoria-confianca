@@ -2,20 +2,27 @@ Vue.createApp({
     data() {
         return {
             loading: false,
-            filtros: {
-                tipoSolicitacao:1,
-                teste:'teste'
-            },
             baseUrl: $('#baseUrl').val(),
             solicitacoes: [],
-            idAdmin: 0
+            tiposSolicitacao: [],
+            idAdmin: 0,
+            listaStatus: [],
+            minhasSolicitacoes: 0,
+            filtros: {
+                minhasSolicitacoes: false,
+                status: [],
+                tiposSolicitacoes: []
+            }
         }
     },
 
     methods: {
         buscarSolicitacoes(){
+            this.loading = true
+            
             var data = new FormData();
             data.append('filtros', this.filtros)
+
             
             $.ajax({
                 url: this.baseUrl+'solicitacoes/buscar',
@@ -23,8 +30,16 @@ Vue.createApp({
                 data: {filtros: this.filtros}, 
                 dataType: 'json',                
                 success: (data) => {
+                    this.listaStatus = data.status
                     this.solicitacoes = data.solicitacoes
+                    this.minhasSolicitacoes = data.minhasSolicitacoes
+                    this.tiposSolicitacao = data.tiposSolicitacao
+
+                    this.loading = false
                 },
+                complete(){
+                    this.loading = false
+                }
             });
         },
 
@@ -42,6 +57,22 @@ Vue.createApp({
                     this.loading = false
                 }
             });
+        },
+
+        setMinhasSolicitacoes(){
+            if(this.filtros.minhasSolicitacoes === true){
+                this.filtros.minhasSolicitacoes = false
+                $('#minhasSolicitacoesBtn').removeClass('active')
+            }else{
+                this.filtros.minhasSolicitacoes = true
+                $('#minhasSolicitacoesBtn').addClass('active')
+            }
+
+            this.buscarSolicitacoes()
+        },
+
+        addTipoSolicitacao(){
+            console.log(this.filtros.tiposSolicitacoes);
         }
     },
 

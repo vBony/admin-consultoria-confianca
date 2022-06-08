@@ -16,12 +16,17 @@ class Solicitacoes extends sanitazerHelper{
     }
 
     public static function showFormasContato($formasContato){
-        $formasContato = array_keys(get_object_vars(json_decode($formasContato)));
-        foreach($formasContato as $i => $formaContato){
-            $formasContato[$i] = ucfirst($formaContato);
+        if(!empty($formasContato)){
+            $formasContato = array_keys(get_object_vars(json_decode($formasContato)));
+            foreach($formasContato as $i => $formaContato){
+                $formasContato[$i] = ucfirst($formaContato);
+            }
+
+            return $formasContato;
+        }else{
+            return array();
         }
 
-        return $formasContato;
     }
 
     public static function observacao($observacao){

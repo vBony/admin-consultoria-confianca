@@ -35,9 +35,11 @@ class homeController extends controllerHelper{
     public function buscarDados(){
         $auth = new AuthAdmin();
         $auth->isLogged();
+        $adminId = $auth->getIdUserLogged();
 
         $acessos = new Acessos();
         $solicitacoes = new Solicitacoes();
+        $admin = new Admin();
         
         $data['acessos'] = [
             'total' => $acessos->total(true)
@@ -47,7 +49,12 @@ class homeController extends controllerHelper{
             'atendidas' => $solicitacoes->status(StatusAvaliacao::atendido(), true),
             'pendentes' => $solicitacoes->status(StatusAvaliacao::aguardando(), true),
             'reprovadas' => $solicitacoes->status(StatusAvaliacao::reprovado(), true),
-            'ultimasSolicitacoes' => $solicitacoes->maisRecentesDashboard()
+            'ultimasSolicitacoes' => $solicitacoes->maisRecentesDashboard(),
+        ];
+
+        $data['membros'] = [
+            'membros' => $admin->buscarDashboard($adminId),
+            'totalMembros' => $admin->totalMembros($adminId)
         ];
 
         $this->response($data);

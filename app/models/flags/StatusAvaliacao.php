@@ -7,6 +7,15 @@ class StatusAvaliacao {
     private static $atendido = 2;
     private static $reprovado = 3;
 
+    public static function map(){
+        return [
+            self::$aguardando => 'Aguardando',
+            self::$emAtendimento => 'Em atendimento',
+            self::$atendido => 'Atendido',
+            self::$reprovado => 'Reprovado'
+        ];
+    }
+
     public static function aguardando(){
         return self::$aguardando;
     }

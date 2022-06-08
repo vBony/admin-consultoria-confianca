@@ -140,10 +140,39 @@ class Admin extends modelHelper{
         }
     }
 
+    public function buscarDashboard($idExcecao){
+        $data = array();
+
+        $sql = "SELECT * FROM {$this->table} WHERE id != :id";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':id', $idExcecao);
+        $sql->execute();
+
+        if($sql->rowCount() > 0){
+            foreach($sql->fetchAll(PDO::FETCH_ASSOC) as $user){
+                $data[] = $this->mountData( $this->getSafeData($user), true);
+            }
+
+            return $data;
+        }
+    }
+
+    public function totalMembros($idExcecao){
+        $data = array();
+
+        $sql = "SELECT count(*) as total FROM {$this->table} WHERE id != :id";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':id', $idExcecao);
+        $sql->execute();
+
+        $data = $sql->fetch(PDO::FETCH_ASSOC);
+        return $data['total'];
+    }
+
     /**
      * Ajusta dados necessários para mostrar na tela
      */
-    public function mountData($data){
+    public function mountData($data, $horaPorExtenso = false){
         $auth = new AuthAdmin();
         $sanitazer = new sanitazerHelper();
 
@@ -155,7 +184,11 @@ class Admin extends modelHelper{
         }
 
         $data['hierarchy'] = Hierarchy::buscar($data['idHierarchy']);
-        $data['createdAtFormatted'] =  $sanitazer->dataEHora($data['createdAt'], true);
+        if(!$horaPorExtenso){
+            $data['createdAtFormatted'] =  $sanitazer->dataEHora($data['createdAt'], true);
+        }else{
+            $data['createdAtFormatted'] =  $sanitazer->diferencaDatasPorExtenso($data['createdAt'], 'passado_simples');
+        }
 
         return $data;
     }

@@ -88,3 +88,7 @@
     height:calc(inherit - 20px);
     margin: 0px 5px;
 }
+
+[v-cloak]{
+    display: none;
+}

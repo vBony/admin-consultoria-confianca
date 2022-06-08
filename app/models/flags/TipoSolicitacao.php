@@ -5,9 +5,9 @@ class TipoSolicitacao {
     private static $contato = 1;
     private static $simulacao = 2;
 
-    private static function map(){
+    public static function map(){
         return [
-            self::$contato => 'Contato',
+            self::$contato => 'Dúvida',
             self::$simulacao => 'Simulação'
         ];
     }
