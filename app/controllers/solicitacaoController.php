@@ -21,7 +21,7 @@ class solicitacaoController extends controllerHelper{
     }
 
     public function id($id){
-        $tipoSolicitacao = $this->safeData($_GET, 'tipo');
+        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
 
         $solicitacao = $this->Solicitacoes->buscarPorId($id, $tipoSolicitacao);
 
@@ -54,12 +54,14 @@ class solicitacaoController extends controllerHelper{
             exit;
         }
 
+        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
+
         $this->Auth->isLogged();
 
         $adminId = $this->Auth->getIdUserLogged();
         $user = $this->Admin->buscarPorId($adminId);
 
-        $solicitacao = $this->Solicitacoes->buscarParaAvaliacao($_SESSION['idSolicitacao'], $adminId);
+        $solicitacao = $this->Solicitacoes->buscarParaAvaliacao($_SESSION['idSolicitacao'], $adminId, $tipoSolicitacao);
 
         $response = [
             'solicitacao' => $solicitacao,
@@ -74,8 +76,9 @@ class solicitacaoController extends controllerHelper{
 
         $adminId = $this->Auth->getIdUserLogged();
         $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
+        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
 
-        $podeTornarAvaliador = $this->Solicitacoes->podeTornarAvaliador($idSolicitacao, $adminId);
+        $podeTornarAvaliador = $this->Solicitacoes->podeTornarAvaliador($idSolicitacao, $adminId, $tipoSolicitacao);
 
         if($podeTornarAvaliador !== true){
             $message = '';
@@ -89,8 +92,8 @@ class solicitacaoController extends controllerHelper{
             return $this->response(['error' => $message]);
         }
 
-        if(!empty($idSolicitacao) && $this->Solicitacoes->tornarAvaliador($adminId, $idSolicitacao)){
-            $this->response(['solicitacao' => $this->Solicitacoes->buscarParaAvaliacao($idSolicitacao, $adminId)]);
+        if(!empty($idSolicitacao) && $this->Solicitacoes->tornarAvaliador($adminId, $idSolicitacao, $tipoSolicitacao)){
+            $this->response(['solicitacao' => $this->Solicitacoes->buscarParaAvaliacao($idSolicitacao, $adminId, $tipoSolicitacao)]);
         }else{
             $this->response(['error' => 'Não foi possível realizar essa solicitação, tente novamente mais tarde']);
         }
@@ -101,8 +104,9 @@ class solicitacaoController extends controllerHelper{
         $adminId = $this->Auth->getIdUserLogged();
 
         $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
+        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
 
-        if(!empty($idSolicitacao) && $this->Solicitacoes->isAvaliador($idSolicitacao, $adminId)){
+        if(!empty($idSolicitacao) && $this->Solicitacoes->isAvaliador($idSolicitacao, $adminId, $tipoSolicitacao)){
             $this->response(['telefone' => $this->Solicitacoes->telefone($idSolicitacao)]);
         }else{
             $this->response(['error' => 'Você não é o avaliador dessa solicitação']);
@@ -114,8 +118,9 @@ class solicitacaoController extends controllerHelper{
         $adminId = $this->Auth->getIdUserLogged();
 
         $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
+        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
 
-        if(!empty($idSolicitacao) && $this->Solicitacoes->isAvaliador($idSolicitacao, $adminId)){
+        if(!empty($idSolicitacao) && $this->Solicitacoes->isAvaliador($idSolicitacao, $adminId, $tipoSolicitacao)){
             $this->response(['email' => $this->Solicitacoes->email($idSolicitacao)]);
         }else{
             $this->response(['error' => 'Você não é o avaliador dessa solicitação']);
@@ -127,7 +132,9 @@ class solicitacaoController extends controllerHelper{
         $adminId = $this->Auth->getIdUserLogged();
 
         $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
-        $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao);
+        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
+
+        $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao, $tipoSolicitacao);
 
         if(empty($solicitacao)){
             $this->response(['error' => 'Solicitação não encontrada']);
@@ -136,8 +143,8 @@ class solicitacaoController extends controllerHelper{
         if($adminId != $solicitacao['idAdmin']){
             $this->response(['error' => 'Você não é o responsável por essa solicitação.']);
         }else{
-            if($this->Solicitacoes->aprovar($idSolicitacao)){
-                $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao);
+            if($this->Solicitacoes->aprovar($idSolicitacao, $tipoSolicitacao)){
+                $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao, $tipoSolicitacao);
 
 
                 $this->response([
@@ -156,14 +163,15 @@ class solicitacaoController extends controllerHelper{
         $adminId = $this->Auth->getIdUserLogged();
 
         $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
-        $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao);
+        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
+        $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao, $tipoSolicitacao);
         $motivo = $this->safeData($_POST, 'motivo');
 
         if($adminId != $solicitacao['idAdmin']){
             $this->response(['error' => 'Você não é o responsável por essa solicitação.']);
         }else{
-            if($this->Solicitacoes->reprovar($idSolicitacao, $motivo)){
-                $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao);
+            if($this->Solicitacoes->reprovar($idSolicitacao, $motivo, $tipoSolicitacao)){
+                $solicitacao = $this->Solicitacoes->buscarPorId($idSolicitacao, $tipoSolicitacao);
 
                 $this->response([
                     'success' => true,

@@ -213,7 +213,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row" v-if="solicitacao.tipoSolicitacao == 1">
                                     <div class="col-lg-6 col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label>CPF</label>
@@ -229,9 +229,9 @@
                                     </div>
                                 </div>
 
-                                <hr>
+                                <hr v-if="solicitacao.tipoSolicitacao == 1">
 
-                                <div class="row">
+                                <div class="row" v-if="solicitacao.tipoSolicitacao == 1">
                                     <div class="col-lg-8 col-md-8 col-sm-12">
                                         <div class="form-group">
                                             <label>Tipo de imóvel</label>
@@ -252,7 +252,7 @@
                                 </div>
                                 
 
-                                <div class="row">
+                                <div class="row" v-if="solicitacao.tipoSolicitacao == 1">
                                     <div class="col-lg-4 col-md-4 col-sm-12">
                                         <div class="form-group">
                                             <label>Valor do imóvel</label>
@@ -278,10 +278,16 @@
                                 <hr>
 
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-12" v-if="solicitacao.tipoSolicitacao == 1">
                                         <div class="form-group">
                                             <label>Observação</label>
                                             <textarea class="form-control" rows="3" placeholder="Observação" readonly="true" :value="solicitacao.observacao"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-12" v-if="solicitacao.tipoSolicitacao == 2">
+                                        <div class="form-group">
+                                            <label>Mensagem</label>
+                                            <textarea class="form-control" rows="3" placeholder="Observação" readonly="true" :value="solicitacao.mensagem"></textarea>
                                         </div>
                                     </div>
                                 </div>

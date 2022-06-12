@@ -167,9 +167,13 @@ class Solicitacoes extends modelHelper{
         }
     }
 
-    public function buscarPorId($id){
-        $sql  = "SELECT * FROM {$this->tabela} WHERE id = :id";
-        // exit($sql);
+    public function buscarPorId($id, $tipoSolicitacao = null){
+        if(!empty($tipoSolicitacao)){
+            $sql  = "SELECT tc.*, 2 as tipoSolicitacao FROM {$this->tableContato} tc WHERE tc.id = :id";
+        }else{
+            $sql  = "SELECT ts.*, 1 as tipoSolicitacao FROM {$this->tabela} ts WHERE ts.id = :id";
+        }
+
         $sql = $this->db->prepare($sql);
         $sql->bindValue(':id', $id);
         $sql->execute();
@@ -190,8 +194,8 @@ class Solicitacoes extends modelHelper{
         return $retorno;
     }
 
-    public function buscarParaAvaliacao($id, $idAdmin){
-        $solicitacao = $this->buscarPorId($id);
+    public function buscarParaAvaliacao($id, $idAdmin, $tipoSolicitacao = null){
+        $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
 
         if($idAdmin != $solicitacao['idAdmin']){
             return Sanitazer::naoAvaliador($solicitacao);
@@ -200,8 +204,12 @@ class Solicitacoes extends modelHelper{
         }
     }
 
-    public function tornarAvaliador($adminId, $id){
-        $sql  = "UPDATE {$this->tabela} ";
+    public function tornarAvaliador($adminId, $id, $tipoSolicitacao=null){
+        if(!empty($tipoSolicitacao)){
+            $sql  = "UPDATE {$this->tableContato} ";
+        }else{
+            $sql  = "UPDATE {$this->tabela} ";
+        }
         $sql .= "SET idAdmin = :idAdmin, statusAdmin= :statusAdmin ";
         $sql .= "WHERE id=:id ";
         $sql = $this->db->prepare($sql);
@@ -227,8 +235,12 @@ class Solicitacoes extends modelHelper{
         }
     }
 
-    public function aprovar($idSolicitacao){
-        $sql  = "UPDATE {$this->tabela} ";
+    public function aprovar($idSolicitacao, $tipoSolicitacao=null){
+        if(!empty($tipoSolicitacao)){
+            $sql  = "UPDATE {$this->tableContato} ";
+        }else{
+            $sql  = "UPDATE {$this->tabela} ";
+        }
         $sql .= "SET statusAdmin = :statusAdmin, adminDate = :adminDate ";
         $sql .= "WHERE id=:id ";
 
@@ -253,7 +265,12 @@ class Solicitacoes extends modelHelper{
         }
     }
 
-    public function reprovar($idSolicitacao, $motivo){
+    public function reprovar($idSolicitacao, $motivo, $tipoSolicitacao=null){
+        if(!empty($tipoSolicitacao)){
+            $sql  = "UPDATE {$this->tableContato} ";
+        }else{
+            $sql  = "UPDATE {$this->tabela} ";
+        }
         $sql  = "UPDATE {$this->tabela} ";
         $sql .= "SET statusAdmin = :statusAdmin, adminDate = :adminDate, observacaoAdmin = :observacaoAdmin ";
         $sql .= "WHERE id=:id ";
@@ -393,8 +410,8 @@ class Solicitacoes extends modelHelper{
         }
     }
 
-    public function podeTornarAvaliador($id, $idAdmin){
-        $solicitacao = $this->buscarPorId($id);
+    public function podeTornarAvaliador($id, $idAdmin, $tipoSolicitacao = null){
+        $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
 
         if($solicitacao['idAdmin'] > 0){
             if($solicitacao['idAdmin'] != $idAdmin){
@@ -407,8 +424,8 @@ class Solicitacoes extends modelHelper{
         return true;
     }
 
-    public function isAvaliador($id, $idAdmin){
-        $solicitacao = $this->buscarPorId($id);
+    public function isAvaliador($id, $idAdmin, $tipoSolicitacao = null){
+        $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
 
         if($solicitacao['idAdmin'] > 0){
             if($solicitacao['idAdmin'] == $idAdmin){
@@ -423,13 +440,13 @@ class Solicitacoes extends modelHelper{
         return false;
     }
 
-    public function telefone($id){
-        $solicitacao = $this->buscarPorId($id);
+    public function telefone($id, $tipoSolicitacao = null){
+        $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
 
         return $solicitacao['telefone'];
     }
-    public function email($id){
-        $solicitacao = $this->buscarPorId($id);
+    public function email($id, $tipoSolicitacao = null){
+        $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
 
         return $solicitacao['email'];
     }
