@@ -2,8 +2,8 @@
 namespace models\flags;
 
 class TipoSolicitacao {
-    private static $contato = 1;
-    private static $simulacao = 2;
+    private static $simulacao = 1;
+    private static $contato = 2;
 
     public static function map(){
         return [

@@ -18,9 +18,15 @@ Vue.createApp({
 
     methods: {
         buscarSolicitacao(){
+            let tipoSolicitacao = this.getParameterByName('tipo')
+
+            var data = new FormData();
+            data.append('tipoSolicitacao', tipoSolicitacao)
+
             $.ajax({
                 url: this.baseUrl+'api/solicitacao/buscar',
                 type: "POST",
+                data: {tipoSolicitacao: tipoSolicitacao},
                 dataType: 'json',                
                 success: (data) => {
                     this.solicitacao = data.solicitacao
@@ -48,13 +54,16 @@ Vue.createApp({
         
         tornarAvaliador(){
             let idSolicitacao = this.solicitacao['id']
-
+            let tipoSolicitacao = this.getParameterByName('tipo')
+            
             var data = new FormData();
             data.append('idSolicitacao', idSolicitacao)
+            data.append('tipoSolicitacao', tipoSolicitacao)
+
             this.loadingStatusAvaliacao = true
             $.ajax({
                 url: this.baseUrl+'api/solicitacao/tornar-avaliador',
-                data: {idSolicitacao: idSolicitacao},
+                data: {idSolicitacao: idSolicitacao, tipoSolicitacao: tipoSolicitacao},
                 type: "POST",
                 dataType: 'json',                
                 success: (data) => {
@@ -100,14 +109,16 @@ Vue.createApp({
 
         getTelefone(){
             let idSolicitacao = this.solicitacao['id']
+            let tipoSolicitacao = this.getParameterByName('tipo')
 
             var data = new FormData();
             data.append('idSolicitacao', idSolicitacao)
+            data.append('tipoSolicitacao', tipoSolicitacao)
 
             this.loadingTelefone = true
             $.ajax({
                 url: this.baseUrl+'api/solicitacao/telefone-cliente',
-                data: {idSolicitacao: idSolicitacao},
+                data: {idSolicitacao: idSolicitacao, tipoSolicitacao: tipoSolicitacao},
                 type: "POST",
                 dataType: 'json',                
                 success: (data) => {
@@ -146,9 +157,12 @@ Vue.createApp({
         
         confirmaAprovacao(){
             let idSolicitacao = this.solicitacao['id']
+            let tipoSolicitacao = this.getParameterByName('tipo')
 
             var data = new FormData();
             data.append('idSolicitacao', idSolicitacao)
+            data.append('tipoSolicitacao', tipoSolicitacao)
+
 
             Swal.fire({
                 title: 'Confirmar aprovação',
@@ -168,7 +182,7 @@ Vue.createApp({
 
                     $.ajax({
                         url: this.baseUrl+'api/solicitacao/aprovar',
-                        data: {idSolicitacao: idSolicitacao},
+                        data: {idSolicitacao: idSolicitacao, tipoSolicitacao: tipoSolicitacao},
                         type: "POST",
                         dataType: 'json',                
                         success: (data) => {
@@ -188,9 +202,13 @@ Vue.createApp({
         },
 
         reprovarSolicitacao(){
+            let tipoSolicitacao = this.getParameterByName('tipo')
+
+
             var data = new FormData();
             data.append('idSolicitacao', this.solicitacao['id'])
             data.append('motivo', this.solicitacao['observacaoAdmin'])
+            data.append('tipoSolicitacao', tipoSolicitacao)
 
             Swal.fire({
                 title: 'Confirmar reprovação',
@@ -212,7 +230,8 @@ Vue.createApp({
                         url: this.baseUrl+'api/solicitacao/reprovar',
                         data: {
                             idSolicitacao: this.solicitacao['id'],
-                            motivo: this.solicitacao['observacaoAdmin']
+                            motivo: this.solicitacao['observacaoAdmin'],
+                            tipoSolicitacao: tipoSolicitacao
                         },
                         type: "POST",
                         dataType: 'json',                
@@ -255,13 +274,15 @@ Vue.createApp({
             this.loadingEmail = true
 
             let idSolicitacao = this.solicitacao['id']
+            let tipoSolicitacao = this.getParameterByName('tipo')
 
             var data = new FormData();
             data.append('idSolicitacao', idSolicitacao)
+            data.append('tipoSolicitacao', tipoSolicitacao)
 
             $.ajax({
                 url: this.baseUrl+'api/solicitacao/email-cliente',
-                data: {idSolicitacao: idSolicitacao},
+                data: {idSolicitacao: idSolicitacao, tipoSolicitacao: tipoSolicitacao},
                 type: "POST",
                 dataType: 'json',                
                 success: (data) => {
@@ -280,6 +301,15 @@ Vue.createApp({
                     this.loadingEmail = false
                 }
             });
+        },
+
+        getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
         }
     },
     mounted(){
