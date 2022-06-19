@@ -315,7 +315,7 @@ class Solicitacoes extends modelHelper{
 
     public function totalPorMes($ano){        
         $sql  = " SELECT ";
-        $sql .= "     extract(MONTH from s.createdAt) AS mes, ";
+        $sql .= "     extract(MONTH from s.createdAt) - 1 AS mes, ";
         $sql .= "     count(s.id) AS total ";
         $sql .= " FROM {$this->tabela} s ";
         $sql .= " WHERE extract(YEAR FROM s.createdAt) = :ano ";
@@ -335,7 +335,7 @@ class Solicitacoes extends modelHelper{
             }
 
             // Complementando array com os meses que não possuiram acessos
-            $maxMeses = 12;
+            $maxMeses = 11;
             for($i = 0; $i <= $maxMeses; $i++){
                 if(!key_exists($i, $retorno)){
                     $retorno[$i] = 0;
