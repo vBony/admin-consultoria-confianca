@@ -39,8 +39,10 @@ class solicitacoesController extends controllerHelper{
         $adminId = $auth->getIdUserLogged();
 
         $filtros = !empty($_POST['filtros']) ? $_POST['filtros'] : array();
+        $paging = $this->safeData($_POST, 'paging');
+        $pagina = $this->safeData($paging, 'atual');
 
-        $solicitacoes = $this->Solicitacoes->buscar($filtros, $adminId);
+        $solicitacoes = $this->Solicitacoes->buscar($filtros, $adminId, $pagina);
 
         $this->response([
             'solicitacoes' => $solicitacoes,

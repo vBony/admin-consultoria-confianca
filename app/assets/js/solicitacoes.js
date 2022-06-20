@@ -12,7 +12,8 @@ Vue.createApp({
                 minhasSolicitacoes: false,
                 status: [],
                 tiposSolicitacoes: []
-            }
+            },
+            paging: []
         }
     },
 
@@ -22,18 +23,19 @@ Vue.createApp({
             
             var data = new FormData();
             data.append('filtros', this.filtros)
+            data.append('paging', this.paging)
 
-            
             $.ajax({
                 url: this.baseUrl+'solicitacoes/buscar',
                 type: "POST",             
-                data: {filtros: this.filtros}, 
+                data: {filtros: this.filtros, "paging": this.paging}, 
                 dataType: 'json',                
                 success: (data) => {
                     this.listaStatus = data.status
-                    this.solicitacoes = data.solicitacoes
+                    this.solicitacoes = data.solicitacoes.data
                     this.minhasSolicitacoes = data.minhasSolicitacoes
                     this.tiposSolicitacao = data.tiposSolicitacao
+                    this.paging = data.solicitacoes.paging
 
                     this.loading = false
                 },
@@ -78,15 +80,13 @@ Vue.createApp({
 
     mounted(){
 
+        $('#paging').mask("#")
+
         $(function () {
             $('[data-toggle="popover"]').popover()
         })
 
         this.buscarIdAdmin()
         this.buscarSolicitacoes()
-
-        setInterval(() => {
-            this.buscarSolicitacoes()
-        }, 30000);
     }
 }).mount('#app')

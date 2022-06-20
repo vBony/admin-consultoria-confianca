@@ -25,8 +25,10 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3"></script>
+    <script src="<?=$baseUrl?>app/assets/libraries/jquery.mask.min.js"></script>
     <script src="<?=$baseUrl?>app/dist/js/adminlte.js"></script>
     <script src="<?=$baseUrl?>app/assets/js/template.js"></script>
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper" id="app">
@@ -198,6 +200,14 @@
                                         </tr>
                                     </tbody>
                                 </table>
+
+                                <div class="col-12">
+                                    <div class="py-3 me-auto">
+                                        <span>Página</span>
+                                        <input type="text" id="paging" maxlength="3" size="3" class="mx-2" v-model="paging.atual" @change="buscarSolicitacoes()">
+                                        <span>de {{paging.total}}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
