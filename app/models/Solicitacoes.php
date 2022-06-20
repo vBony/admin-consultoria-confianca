@@ -25,10 +25,22 @@ class Solicitacoes extends modelHelper{
         $this->sanitazerHelper = new sanitazerHelper();
     }
 
-    public function buscar($filtros, $idAdmin){
+    public function buscar($filtros, $idAdmin, $pagina = 1){
+        $pagina = intval($pagina);
+
         $status = $this->getStatus($filtros);
         $minhasSolicitacoes = $this->getMinhasSolicitacoes($filtros);
         $tipoSolicitacao = $this->getTipoSolicitacao($filtros);
+
+        $totalItens = $this->getCountSolicitacoes($filtros, $idAdmin);
+
+        $porPagina = 7;
+        $totalPages = ceil($totalItens / $porPagina);
+
+        $pagina = ($pagina > $totalPages || $pagina < 1) ? 1 : $pagina;
+        $startAt = $porPagina * ($pagina - 1);
+
+
 
         if($this->soSimulacao($tipoSolicitacao) || ( $this->todasSolicitacoes($tipoSolicitacao) ) || empty($tipoSolicitacao)){
             $sql  = "SELECT s.id, s.nome, s.idAdmin, s.statusAdmin, s.createdAt, 1 as tipoSolicitacao, s.formasContato, s.adminDate FROM {$this->tabela} s ";
@@ -65,7 +77,7 @@ class Solicitacoes extends modelHelper{
             }
         }
 
-        $sql .= "ORDER BY createdAt DESC, statusAdmin DESC";       
+        $sql .= "ORDER BY createdAt DESC, statusAdmin DESC LIMIT $startAt, $porPagina";       
         $sql = $this->db->prepare($sql);
 
         if(!empty($status)){
@@ -80,10 +92,96 @@ class Solicitacoes extends modelHelper{
 
         $sql->execute();
 
+        $data = array();
         if($sql->rowCount() > 0){
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-            return $this->montarRegistros($data);
+            $data = $this->montarRegistros($data);
+        }
+
+        return [
+            'data' => $data,
+            'paging' => [
+                'total' => $totalPages,
+                'atual' => $pagina
+            ]
+        ];
+    }
+
+    public function getCountSolicitacoes($filtros, $idAdmin){
+        $status = $this->getStatus($filtros);
+        $minhasSolicitacoes = $this->getMinhasSolicitacoes($filtros);
+        $tipoSolicitacao = $this->getTipoSolicitacao($filtros);
+
+        if($this->soSimulacao($tipoSolicitacao) || ( $this->todasSolicitacoes($tipoSolicitacao) ) || empty($tipoSolicitacao)){
+            $sql  = "SELECT count(*) as total FROM {$this->tabela} s ";
+            $sql .= "WHERE id > 0 ";
+    
+            if(!empty($status)){
+                $sql .= "AND statusAdmin IN ({$status['templates']}) ";
+            }
+    
+            if($minhasSolicitacoes){
+                $sql .= "AND idAdmin = :idAdmin ";
+            }
+
+            $sql = $this->db->prepare($sql);
+
+            if(!empty($status)){
+                foreach($status['bindValues'] as $key => $value){
+                    $sql->bindValue($key, $value);
+                }
+            }
+
+            if($minhasSolicitacoes){
+                $sql->bindValue('idAdmin', $idAdmin);
+            }
+
+            $sql->execute();
+
+            $totalSimulacao = $sql->fetch(PDO::FETCH_ASSOC);
+        }
+
+        if($this->soContato($tipoSolicitacao) || ($this->todasSolicitacoes($tipoSolicitacao)) || empty($tipoSolicitacao)){
+            $sql1  = "SELECT  count(*) as total FROM {$this->tableContato} c ";
+
+            $sql1 .= "WHERE id > 0 ";
+
+            if(!empty($status)){
+                $sql1 .= "AND statusAdmin IN ({$status['templates']}) ";
+            }
+    
+            if($minhasSolicitacoes){
+                $sql1 .= "AND idAdmin = :idAdmin ";
+            }
+
+            $sql1 = $this->db->prepare($sql1);
+
+            if(!empty($status)){
+                foreach($status['bindValues'] as $key => $value){
+                    $sql1->bindValue($key, $value);
+                }
+            }
+
+            if($minhasSolicitacoes){
+                $sql1->bindValue('idAdmin', $idAdmin);
+            }
+
+            $sql1->execute();
+
+            $totalContato = $sql1->fetch(PDO::FETCH_ASSOC);
+        }
+
+        if($this->soSimulacao($tipoSolicitacao)){
+            return $totalSimulacao['total'];
+        }
+        
+        if($this->soContato($tipoSolicitacao)){
+            return $totalContato['total'];
+        }
+
+        if(($this->todasSolicitacoes($tipoSolicitacao)) || empty($tipoSolicitacao)){
+            return $totalContato['total'] + $totalSimulacao['total'];
         }
     }
 
@@ -315,7 +413,7 @@ class Solicitacoes extends modelHelper{
 
     public function totalPorMes($ano){        
         $sql  = " SELECT ";
-        $sql .= "     extract(MONTH from s.createdAt) AS mes, ";
+        $sql .= "     extract(MONTH from s.createdAt) - 1 AS mes, ";
         $sql .= "     count(s.id) AS total ";
         $sql .= " FROM {$this->tabela} s ";
         $sql .= " WHERE extract(YEAR FROM s.createdAt) = :ano ";
@@ -335,7 +433,7 @@ class Solicitacoes extends modelHelper{
             }
 
             // Complementando array com os meses que não possuiram acessos
-            $maxMeses = 12;
+            $maxMeses = 11;
             for($i = 0; $i <= $maxMeses; $i++){
                 if(!key_exists($i, $retorno)){
                     $retorno[$i] = 0;

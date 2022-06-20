@@ -156,7 +156,7 @@ $(document).ready(function (){
 
 	function setDataChart(data){
 		let defaultData = [0,0,0,0,50,0,0,0,0,0,0,0]
-		let max = 12
+		let max = 11
 		let retorno = []
 
 		if(data !== undefined){

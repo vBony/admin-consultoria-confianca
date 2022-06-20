@@ -56,7 +56,7 @@ class Acessos extends modelHelper{
 
     public function totalPorMes($ano){
         $sql  = " SELECT ";
-        $sql .= "     extract(MONTH from ac.dataCriacao) AS mes, ";
+        $sql .= "     extract(MONTH from ac.dataCriacao) - 1 AS mes, "; // SUBTRAINDO PORQUE O ARRAY COMEÇA EM 0
         $sql .= "     count(ac.id) AS total ";
         $sql .= " FROM {$this->table} ac ";
         $sql .= "     INNER JOIN ipGeolocation ig ON ac.idIp = ig.id ";
@@ -78,7 +78,7 @@ class Acessos extends modelHelper{
             }
 
             // Complementando array com os meses que não possuiram acessos
-            $maxMeses = 12;
+            $maxMeses = 11;
             for($i = 0; $i <= $maxMeses; $i++){
                 if(!key_exists($i, $retorno)){
                     $retorno[$i] = 0;
