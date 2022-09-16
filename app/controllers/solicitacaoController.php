@@ -104,9 +104,9 @@ class solicitacaoController extends controllerHelper{
         $adminId = $this->Auth->getIdUserLogged();
 
         $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
-        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
+        // $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
 
-        if(!empty($idSolicitacao) && $this->Solicitacoes->isAvaliador($idSolicitacao, $adminId, $tipoSolicitacao)){
+        if(!empty($idSolicitacao)){
             $this->response(['telefone' => $this->Solicitacoes->telefone($idSolicitacao)]);
         }else{
             $this->response(['error' => 'Você não é o avaliador dessa solicitação']);
@@ -115,12 +115,12 @@ class solicitacaoController extends controllerHelper{
 
     public function emailCliente(){
         $this->Auth->isLogged();
-        $adminId = $this->Auth->getIdUserLogged();
+        // $adminId = $this->Auth->getIdUserLogged();
 
         $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
-        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
+        // $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
 
-        if(!empty($idSolicitacao) && $this->Solicitacoes->isAvaliador($idSolicitacao, $adminId, $tipoSolicitacao)){
+        if(!empty($idSolicitacao)){
             $this->response(['email' => $this->Solicitacoes->email($idSolicitacao)]);
         }else{
             $this->response(['error' => 'Você não é o avaliador dessa solicitação']);

@@ -42,7 +42,7 @@ class Solicitacoes extends sanitazerHelper{
         $registro['cpf'] = null;
         $registro['cpfConjuge'] = null;
         $registro['email'] = null;
-        $registro['formasContato'] = array();
+        // $registro['formasContato'] = array();
         $registro['telefone'] = null;
 
         return $registro;

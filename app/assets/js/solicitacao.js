@@ -107,6 +107,14 @@ Vue.createApp({
             }
         },
 
+        abrirWhatsapp(){
+            if(this.solicitacao['telefone']){
+                window.open(`https://api.whatsapp.com/send?phone=${this.solicitacao['telefone']}`, '_blank')
+            }else{
+                alert("Não foi possível realizar essa ação.")
+            }
+        },
+
         getTelefone(){
             let idSolicitacao = this.solicitacao['id']
             let tipoSolicitacao = this.getParameterByName('tipo')
