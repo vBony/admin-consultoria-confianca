@@ -142,18 +142,18 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label>Formas de contato</label>
-                                            <button type="button" class="btn btn-block btn-success btn-sm" :disabled="idAdmin != solicitacao.idAdmin || !solicitacao.formasContato.includes('Whatsapp') || solicitacao.statusAdmin != 1" data-toggle="modal" data-target="#modalMensagemWhatsapp">
+                                            <label>Formas de contato</label> 
+                                            <button type="button" class="btn btn-block btn-success btn-sm" :disabled="!solicitacao.formasContato.includes('Whatsapp')" data-toggle="modal" data-target="#modalMensagemWhatsapp" @click="getTelefone()">
                                                 <i class="fab fa-whatsapp mr-1"></i>
                                                 Whatsapp
                                             </button>    
 
-                                            <button type="button" class="btn btn-block btn-info btn-sm" :disabled="idAdmin != solicitacao.idAdmin || !solicitacao.formasContato.includes('Email') || solicitacao.statusAdmin != 1" @click="carregarEmail()">
+                                            <button type="button" class="btn btn-block btn-info btn-sm" :disabled="!solicitacao.formasContato.includes('Email')" @click="carregarEmail()">
                                                 <i class="fas fa-envelope mr-1"></i>
                                                 E-mail
                                             </button>
 
-                                            <button type="button" class="btn btn-block btn-secondary btn-sm" :disabled="idAdmin != solicitacao.idAdmin || !solicitacao.formasContato.includes('Ligacao') || solicitacao.statusAdmin != 1" data-toggle="modal" data-target="#modalLigacao" @click="getTelefone()">
+                                            <button type="button" class="btn btn-block btn-secondary btn-sm" :disabled="!solicitacao.formasContato.includes('Ligacao')" data-toggle="modal" data-target="#modalLigacao" @click="getTelefone()">
                                                 <i class="fas fa-phone-alt mr-1"></i>
                                                 Ligação
                                             </button>
@@ -309,11 +309,33 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class="overlay" v-if="loadingTelefone == true">
+                        <div class="spinner-border text-white" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
+                        <div class="text-white fs-4">Carregando...</div>
+                    </div>
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">
-                                <label>Mensagem</label>
-                                <textarea class="form-control" rows="3" placeholder="Digite aqui a sua mensagem" :value="mensagemWhatsapp"></textarea>
+                                <h6><b> Como deseja prosseguir? </b></h6>
+                                <div class="row d-flex justify-content-around mt-2">
+                                    <button class="btn btn-success mt-2" @click="abrirWhatsapp()">
+                                        <i class="fab fa-whatsapp"></i>
+                                        Whatsapp
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Telefone</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="copiarTelefone" disabled v-model="solicitacao.telefone" aria-label="Código de cadastro" aria-describedby="basic-addon2">
+                                    <div class="input-group-append" >
+                                        <div class="input-group-text" id="basic-addon2"><span id="copiarTelefoneBtn" class="btn btn-success badge" @click="copyToClipboard(solicitacao.telefone, '#copiarTelefoneBtn')">copiar</span></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -379,10 +401,16 @@
                                         <i class="fas fa-phone-alt mr-2"></i>
                                         Realizar ligação
                                     </button>
-                                    <button class="btn btn-primary mt-2" @click="copiarNumeroCliente()">
-                                        <i class="fas fa-clipboard mr-2"></i>
-                                        Copiar número
-                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Telefone</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="copiarTelefone" disabled v-model="solicitacao.telefone" aria-label="Código de cadastro" aria-describedby="basic-addon2">
+                                    <div class="input-group-append" >
+                                        <div class="input-group-text" id="basic-addon2"><span id="copiarTelefoneBtn" class="btn btn-success badge" @click="copyToClipboard(solicitacao.telefone, '#copiarTelefoneBtn')">copiar</span></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

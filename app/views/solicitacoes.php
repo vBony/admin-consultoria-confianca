@@ -202,9 +202,17 @@
                                 </table>
 
                                 <div class="col-12">
-                                    <div class="py-3 me-auto">
+                                    <div class="py-3 me-auto d-flex flex-row">
                                         <span>Página</span>
-                                        <input type="text" id="paging" maxlength="3" size="3" class="mx-2" v-model="paging.atual" @change="buscarSolicitacoes()">
+                                        <div class="d-flex flex-row align-items-center">
+                                            <div class="px-3" role="button" @click="paging.atual--; buscarSolicitacoes()">
+                                                <i class="fas fa-caret-left"></i>
+                                            </div>
+                                            <input type="text" id="paging" maxlength="3" size="3" v-model="paging.atual" @change="buscarSolicitacoes()">
+                                            <div class="px-3" role="button" @click="paging.atual++; buscarSolicitacoes()">
+                                                <i class="fas fa-caret-right"></i>
+                                            </div>
+                                        </div>
                                         <span>de {{paging.total}}</span>
                                     </div>
                                 </div>
