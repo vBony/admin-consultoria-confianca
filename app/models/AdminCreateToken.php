@@ -91,7 +91,7 @@ class AdminCreateToken extends modelHelper{
         if($idAdmin !== null && $resetSenha !== false){
             $sql .= "VALUES(:token, :idHierarchy, :createdAt, :validUntil, :idAdmin, 1)";
         }else{
-            $sql .= "VALUES(:token, :idHierarchy, :createdAt, :validUntil, NULL)";
+            $sql .= "VALUES(:token, :idHierarchy, :createdAt, :validUntil, NULL, 0)";
         }
 
         $sql = $this->db->prepare($sql);
