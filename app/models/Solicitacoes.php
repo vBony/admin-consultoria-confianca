@@ -248,7 +248,7 @@ class Solicitacoes extends modelHelper{
      * um array contendo os valores e os templates [:id1] => 1 (para o bind value)
      * e um array só com os templates, para usar na consulta
      */
-    public function mountListValues($values, $templateName, ){
+    public function mountListValues($values, $templateName){
         $bindValues = array();
         $templates = array();
 
