@@ -104,10 +104,10 @@ class solicitacaoController extends controllerHelper{
         $adminId = $this->Auth->getIdUserLogged();
 
         $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
-        // $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
+        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
 
         if(!empty($idSolicitacao)){
-            $this->response(['telefone' => $this->Solicitacoes->telefone($idSolicitacao)]);
+            $this->response(['telefone' => $this->Solicitacoes->telefone($idSolicitacao, $tipoSolicitacao)]);
         }else{
             $this->response(['error' => 'Você não é o avaliador dessa solicitação']);
         }
@@ -118,10 +118,10 @@ class solicitacaoController extends controllerHelper{
         // $adminId = $this->Auth->getIdUserLogged();
 
         $idSolicitacao = $this->safeData($_POST, 'idSolicitacao');
-        // $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
+        $tipoSolicitacao = $this->safeData($_POST, 'tipoSolicitacao');
 
         if(!empty($idSolicitacao)){
-            $this->response(['email' => $this->Solicitacoes->email($idSolicitacao)]);
+            $this->response(['email' => $this->Solicitacoes->email($idSolicitacao, $tipoSolicitacao)]);
         }else{
             $this->response(['error' => 'Você não é o avaliador dessa solicitação']);
         }
@@ -150,7 +150,7 @@ class solicitacaoController extends controllerHelper{
                 $this->response([
                     'success' => true,
                     'status' => StatusAvaliacao::atendido(),
-                    'date' => $this->Sanitazer->dataEHora($solicitacao['adminDate'], true),
+                    'date' => $solicitacao['adminDate'],
                 ]);
             }else{
                 $this->response(['fail' => true]);
@@ -176,7 +176,7 @@ class solicitacaoController extends controllerHelper{
                 $this->response([
                     'success' => true,
                     'status' => StatusAvaliacao::reprovado(),
-                    'date' => $this->Sanitazer->dataEHora($solicitacao['adminDate'], true),
+                    'date' => $solicitacao['adminDate'],
                     'motivo' => $solicitacao['observacaoAdmin']
                 ]);
             }else{

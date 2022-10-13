@@ -369,7 +369,7 @@ class Solicitacoes extends modelHelper{
         }else{
             $sql  = "UPDATE {$this->tabela} ";
         }
-        $sql  = "UPDATE {$this->tabela} ";
+        // $sql  = "UPDATE {$this->tabela} ";
         $sql .= "SET statusAdmin = :statusAdmin, adminDate = :adminDate, observacaoAdmin = :observacaoAdmin ";
         $sql .= "WHERE id=:id ";
 
@@ -487,8 +487,15 @@ class Solicitacoes extends modelHelper{
         $sql->bindValue(':admin', $idAdmin);
         $sql->execute();
 
-        $data = $sql->fetch(PDO::FETCH_ASSOC);
-        return $data['total'];
+        $sql2 = "SELECT count(*) as total FROM {$this->tableContato} WHERE idAdmin = :admin";
+        $sql2 = $this->db->prepare($sql2);
+        $sql2->bindValue(':admin', $idAdmin);
+        $sql2->execute();
+
+        $simulacao = $sql->fetch(PDO::FETCH_ASSOC);
+        $contato = $sql2->fetch(PDO::FETCH_ASSOC);
+
+        return intval($simulacao['total']) + intval($contato['total']);
     }
 
     public function status($status, $short = false){
@@ -539,12 +546,16 @@ class Solicitacoes extends modelHelper{
     }
 
     public function telefone($id, $tipoSolicitacao = null){
-        $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
+        if(!empty($id) && !empty($tipoSolicitacao)){
+            $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
+        }
 
         return $solicitacao['telefone'];
     }
     public function email($id, $tipoSolicitacao = null){
-        $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
+        if(!empty($id) && !empty($tipoSolicitacao)){
+            $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
+        }
 
         return $solicitacao['email'];
     }
