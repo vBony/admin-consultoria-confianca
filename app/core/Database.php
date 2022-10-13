@@ -14,7 +14,7 @@ class Database{
 
     protected function __construct() {
         // create pdo instance and assign to $this->pdo
-        $this->pdo = new PDO("mysql:dbname=".$_ENV['DB_NAME'].";host=".$_ENV['HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS']);
+        $this->pdo = new PDO("mysql:dbname=".$_ENV['DB_NAME'].";charset=utf8;host=".$_ENV['HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS']);
     }
 
     public static function getInstance() {
