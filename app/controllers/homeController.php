@@ -46,9 +46,9 @@ class homeController extends controllerHelper{
         ];
 
         $data['solicitacoes'] = [
-            'atendidas' => $solicitacoes->status(StatusAvaliacao::atendido(), true),
-            'pendentes' => $solicitacoes->status(StatusAvaliacao::aguardando(), true),
-            'reprovadas' => $solicitacoes->status(StatusAvaliacao::reprovado(), true),
+            'atendidas' => $solicitacoes->statusCount(StatusAvaliacao::atendido(), true),
+            'pendentes' => $solicitacoes->statusCount(StatusAvaliacao::aguardando(), true),
+            'reprovadas' => $solicitacoes->statusCount(StatusAvaliacao::reprovado(), true),
             'ultimasSolicitacoes' => $solicitacoes->maisRecentesDashboard(),
         ];
 

@@ -498,7 +498,24 @@ class Solicitacoes extends modelHelper{
         return intval($simulacao['total']) + intval($contato['total']);
     }
 
-    public function status($status, $short = false){
+    public function statusCount($status, $short = false){
+        $contato = $this->statusContatoCount($status);
+        $simulacao = $this->statusSimulacaoCount($status);
+
+        $total = intval($contato) + intval($simulacao);
+
+        if($short){
+            if($short){
+                $sanitazer = new sanitazerHelper();
+                
+                return $sanitazer->numberFormatShort($total);
+            }
+        }else{
+            return $total;
+        }
+    }
+
+    public function statusSimulacaoCount($status){
         $sql = "SELECT count(*) as total FROM {$this->tabela} WHERE statusAdmin = :status";
         $sql = $this->db->prepare($sql);
         $sql->bindValue(':status', $status);
@@ -506,13 +523,18 @@ class Solicitacoes extends modelHelper{
 
         $data = $sql->fetch(PDO::FETCH_ASSOC);
 
-        if($short){
-            $sanitazer = new sanitazerHelper();
-            
-            return $sanitazer->numberFormatShort($data['total']);
-        }else{
-            return $data['total'];
-        }
+        return $data['total'];
+    }
+
+    public function statusContatoCount($status){
+        $sql = "SELECT count(*) as total FROM {$this->tableContato} WHERE statusAdmin = :status";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(':status', $status);
+        $sql->execute();
+
+        $data = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $data['total'];
     }
 
     public function podeTornarAvaliador($id, $idAdmin, $tipoSolicitacao = null){
