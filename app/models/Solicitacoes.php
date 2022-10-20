@@ -568,7 +568,7 @@ class Solicitacoes extends modelHelper{
     }
 
     public function telefone($id, $tipoSolicitacao = null){
-        if(!empty($id) && !empty($tipoSolicitacao)){
+        if(!empty($id)){
             $solicitacao = $this->buscarPorId($id, $tipoSolicitacao);
         }
 
