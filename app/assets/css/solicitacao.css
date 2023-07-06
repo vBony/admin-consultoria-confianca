@@ -1,0 +1,36 @@
+.createdAtTxt{
+    font-size: 14px;
+}
+
+.loading-statusAvaliacao{
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#compose-textarea{
+    height: 300px !important;
+}
+
+.alert-status{
+    font-size: 14px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.icon-alert{
+    margin-right: 4px !important;
+}
+
+.card-header-format{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+}
+
+.status-header{
+    display: flex;
+    align-items: center;
+    /* margin-right: auto; */
+}

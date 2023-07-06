@@ -1,0 +1,8 @@
+.msg{
+    color:red;
+    font-size: 12px;
+}
+
+#btn-loading{
+    display: none;
+}
